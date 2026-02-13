@@ -51,6 +51,7 @@ jobs:
                   echo "Found existing state, copying to working directory..."
                   cp state/terraform.tfstate ./terraform.tfstate
               fi
+              git fetch origin main
               git checkout main
           fi
           
