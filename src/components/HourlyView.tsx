@@ -1,41 +1,46 @@
-import { SHICHEN, ZODIAC_ANIMALS, getCurrentShichen, EARTHLY_BRANCHES } from '@/lib/chinese-calendar';
+import { SHICHEN, HEAVENLY_STEMS, getCurrentShichen } from '@/lib/chinese-calendar';
 
 interface HourlyViewProps {
   selectedDate: Date;
+}
+
+// Get the heavenly stem + earthly branch pair for each shichen of a given day
+function getDayStemBranchPairs(date: Date) {
+  // Simplified: use day-of-year to rotate stems
+  const dayOfYear = Math.floor((date.getTime() - new Date(date.getFullYear(), 0, 0).getTime()) / 86400000);
+  const stemOffset = (dayOfYear * 2) % 10; // each day shifts stems by 2
+  return SHICHEN.map((shi, i) => {
+    const stemIndex = (stemOffset + i) % 10;
+    return `${HEAVENLY_STEMS[stemIndex]}${shi.branch}`;
+  });
 }
 
 const HourlyView = ({ selectedDate }: HourlyViewProps) => {
   const currentHour = new Date().getHours();
   const currentShichen = getCurrentShichen(currentHour);
   const isToday = new Date().toDateString() === selectedDate.toDateString();
+  const pairs = getDayStemBranchPairs(selectedDate);
+
+  const dayName = selectedDate.toLocaleDateString('en-US', { weekday: 'long' });
+  const dateLabel = selectedDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
 
   return (
     <div className="p-4 fade-in">
-      <h2 className="font-serif text-lg font-bold mb-1">十二时辰 · Twelve Shichen</h2>
-      <p className="text-xs text-muted-foreground mb-4">
-        {selectedDate.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
-      </p>
+      <h2 className="font-serif text-center text-lg font-semibold mb-0">{dateLabel}</h2>
+      <div className="text-center text-sm text-primary font-medium bg-secondary/60 rounded py-1 mb-4">{dayName}</div>
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+      <div className="flex flex-col items-end pr-4 gap-1">
         {SHICHEN.map((shi, i) => {
-          const animal = ZODIAC_ANIMALS[shi.animal];
           const isCurrent = isToday && i === currentShichen;
+          const timeRange = shi.time.replace(':', '').replace('-', '-').replace(':', '');
 
           return (
             <div
               key={i}
-              className={`zodiac-card relative ${isCurrent ? 'ring-2 ring-primary bg-primary/5' : ''}`}
+              className={`flex items-baseline gap-2 ${isCurrent ? 'text-primary font-bold' : 'text-primary/80'}`}
             >
-              {isCurrent && (
-                <span className="absolute top-1 right-2 text-[10px] font-medium text-primary">NOW</span>
-              )}
-              <div className="text-2xl mb-1">{animal.emoji}</div>
-              <div className="font-serif font-bold text-sm">{shi.name}</div>
-              <div className="text-xs text-muted-foreground">{shi.time}</div>
-              <div className="text-xs mt-1">
-                <span className="text-primary font-medium">{EARTHLY_BRANCHES[i]}</span>
-                <span className="text-muted-foreground"> · {animal.name} · {animal.cn}</span>
-              </div>
+              <span className="font-serif text-2xl tracking-wide">{pairs[i]}</span>
+              <span className="text-base font-medium">{shi.time}</span>
             </div>
           );
         })}
