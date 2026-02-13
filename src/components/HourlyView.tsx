@@ -86,5 +86,4 @@ const HourlyView = ({ selectedDate }: HourlyViewProps) => {
     </div>
   );
 };
-
 export default HourlyView;
