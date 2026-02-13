@@ -1,4 +1,5 @@
-import { SHICHEN, HEAVENLY_STEMS, getCurrentShichen } from '@/lib/chinese-calendar';
+import { SHICHEN, HEAVENLY_STEMS, EARTHLY_BRANCHES, getCurrentShichen, getYearStemBranch } from '@/lib/chinese-calendar';
+import HorseMascot from './HorseMascot';
 
 interface HourlyViewProps {
   selectedDate: Date;
@@ -45,6 +46,34 @@ const HourlyView = ({ selectedDate }: HourlyViewProps) => {
           );
         })}
       </div>
+
+      {/* Summary: Year / Month / Day stem-branch + mascot */}
+      {(() => {
+        const yearSB = getYearStemBranch(selectedDate.getFullYear());
+        // Month stem-branch (simplified)
+        const mIdx = selectedDate.getMonth();
+        const monthStem = HEAVENLY_STEMS[(selectedDate.getFullYear() * 2 + mIdx) % 10];
+        const monthBranch = EARTHLY_BRANCHES[(mIdx + 2) % 12];
+        // Day stem-branch
+        const ref = new Date(2000, 0, 1);
+        const diff = Math.floor((selectedDate.getTime() - ref.getTime()) / 86400000);
+        const cycle = ((diff % 60) + 60) % 60;
+        const dayStem = HEAVENLY_STEMS[cycle % 10];
+        const dayBranch = EARTHLY_BRANCHES[cycle % 12];
+
+        return (
+          <div className="flex items-end justify-end gap-3 mt-4 pr-2">
+            <div className="flex flex-col items-end font-serif text-xl text-primary/80">
+              <span>{yearSB.full}<span className="text-xs text-muted-foreground ml-0.5">Y</span></span>
+              <span>{monthStem}{monthBranch}<span className="text-xs text-muted-foreground ml-0.5">M</span></span>
+              <span>{dayStem}{dayBranch}<span className="text-xs text-muted-foreground ml-0.5">D</span></span>
+            </div>
+            <div className="w-16 h-16">
+              <HorseMascot />
+            </div>
+          </div>
+        );
+      })()}
     </div>
   );
 };
