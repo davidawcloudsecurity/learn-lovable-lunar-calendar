@@ -194,7 +194,7 @@ data "aws_ami" "ubuntu" {
     values = ["ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-*"]
   }
 }
-
+/* save money
 # Backend EC2 Instance
 resource "aws_instance" "backend" {
   count                  = var.create_vpc ? 1 : 0
@@ -221,7 +221,7 @@ resource "aws_instance" "backend" {
     Name = "${var.project_tag}-backend"
   }
 }
-
+*/
 # Frontend EC2 Instance
 resource "aws_instance" "frontend" {
   count                  = var.create_vpc ? 1 : 0
