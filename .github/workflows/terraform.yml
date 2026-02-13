@@ -3,9 +3,9 @@ name: learn-lovable-lunar-calendar-apply
 
 # Controls when the action will run. Invokes the workflow on push events but only for the main branch
 on:
-  # workflow_dispatch: uncomment to manual
-  push:
-    branches: [ main ]  
+  workflow_dispatch:
+#  push:
+#    branches: [ main ]  
 
 env:
   
