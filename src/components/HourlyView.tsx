@@ -62,11 +62,20 @@ const HourlyView = ({ selectedDate }: HourlyViewProps) => {
         const dayBranch = EARTHLY_BRANCHES[cycle % 12];
 
         return (
-          <div className="flex items-end justify-end gap-3 mt-4 pr-2">
-            <div className="flex flex-col items-end font-serif text-xl text-primary/80">
-              <span>{yearSB.full}<span className="text-xs text-muted-foreground ml-0.5">Y</span></span>
-              <span>{monthStem}{monthBranch}<span className="text-xs text-muted-foreground ml-0.5">M</span></span>
-              <span>{dayStem}{dayBranch}<span className="text-xs text-muted-foreground ml-0.5">D</span></span>
+          <div className="flex items-end justify-end gap-3 mt-4 pr-4">
+            <div className="flex flex-col items-end gap-1">
+              <div className="flex items-baseline gap-2 text-primary/80">
+                <span className="font-serif text-2xl tracking-wide">{yearSB.full}</span>
+                <span className="text-xs font-medium text-muted-foreground">Y</span>
+              </div>
+              <div className="flex items-baseline gap-2 text-primary/80">
+                <span className="font-serif text-2xl tracking-wide">{monthStem}{monthBranch}</span>
+                <span className="text-xs font-medium text-muted-foreground">M</span>
+              </div>
+              <div className="flex items-baseline gap-2 text-primary/80">
+                <span className="font-serif text-2xl tracking-wide">{dayStem}{dayBranch}</span>
+                <span className="text-xs font-medium text-muted-foreground">D</span>
+              </div>
             </div>
             <div className="w-16 h-16">
               <HorseMascot />
