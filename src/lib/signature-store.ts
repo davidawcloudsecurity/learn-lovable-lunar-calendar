@@ -5,7 +5,7 @@
 import { HEAVENLY_STEMS, EARTHLY_BRANCHES } from './chinese-calendar';
 
 export const MISTAKE_TAGS = [
-  'Pushed people',
+  'Self-Punishment',
   'Spent money emotionally',
   'Trusted too fast',
   'Conflict',
