@@ -59,9 +59,12 @@ const MonthlyView = ({ selectedDate, onDateChange, onViewChange }: MonthlyViewPr
               onClick={() => selectMonth(i)}
               className={`zodiac-card text-left ${isCurrent ? 'ring-2 ring-primary' : ''}`}
             >
-              <div className="flex items-baseline gap-1.5">
+              <div className="flex items-start justify-between mb-1">
                 <span className="font-serif font-bold text-sm">{name}</span>
-                <span className="font-serif text-xs text-primary/70">{mSB.full}</span>
+                <div className="flex flex-col items-center font-serif text-xs text-primary/70 leading-none">
+                  <span>{mSB.full[0]}</span>
+                  <span>{mSB.full[1]}</span>
+                </div>
               </div>
               <div className="text-[10px] text-muted-foreground mt-1">{getLunarRange(i)}</div>
             </button>
