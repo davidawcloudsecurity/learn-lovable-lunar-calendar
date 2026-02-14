@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { getLunarDate, getSolarTerm, loadNotes, getNotesForDate, HEAVENLY_STEMS, EARTHLY_BRANCHES, SOLAR_TERMS } from '@/lib/chinese-calendar';
-import NoteDialog from './NoteDialog';
+import { getLunarDate, getSolarTerm, HEAVENLY_STEMS, EARTHLY_BRANCHES, SOLAR_TERMS } from '@/lib/chinese-calendar';
+import { getDaySignature, signatureHasEntries, loadSignatureStore } from '@/lib/signature-store';
+import SignatureDialog from './SignatureDialog';
 
 interface DailyViewProps {
   selectedDate: Date;
@@ -34,14 +35,11 @@ function getDayStemBranch(date: Date) {
 const DailyView = ({ selectedDate, onDateChange }: DailyViewProps) => {
   const [noteDate, setNoteDate] = useState<string | null>(null);
   const [noteLabel, setNoteLabel] = useState('');
-  const [notes, setNotes] = useState(loadNotes());
+  const [noteSignature, setNoteSignature] = useState('');
+  const [storeVersion, setStoreVersion] = useState(0);
 
   const year = selectedDate.getFullYear();
   const month = selectedDate.getMonth();
-
-  useEffect(() => {
-    if (!noteDate) setNotes(loadNotes());
-  }, [noteDate]);
 
   const firstDay = new Date(year, month, 1).getDay();
   const daysInMonth = new Date(year, month + 1, 0).getDate();
@@ -77,6 +75,8 @@ const DailyView = ({ selectedDate, onDateChange }: DailyViewProps) => {
     const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
     const d = new Date(year, month, day);
     const lunar = getLunarDate(d);
+    const sig = getDaySignature(d);
+    setNoteSignature(sig);
     setNoteLabel(`${d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })} · ${lunar.monthName}${lunar.dayName}`);
     setNoteDate(dateStr);
   };
@@ -113,7 +113,8 @@ const DailyView = ({ selectedDate, onDateChange }: DailyViewProps) => {
           const solarTerm = getSolarTerm(m, d);
           const dateStr = cell.isOutside ? '' : `${year}-${String(month + 1).padStart(2, '0')}-${String(cell.day).padStart(2, '0')}`;
           const isToday = !cell.isOutside && dateStr === todayStr;
-          const hasNotes = !cell.isOutside && getNotesForDate(notes, dateStr).length > 0;
+          const sig = getDaySignature(cell.date);
+          const hasEntries = !cell.isOutside && signatureHasEntries(sig);
           const lunarLabel = lunar.day === 1 ? `lm ${lunar.month}` : lunar.dayName;
           const solarAbbr = solarTerm ? SOLAR_TERM_ABBR[solarTerm.name] || solarTerm.name : null;
 
@@ -143,7 +144,7 @@ const DailyView = ({ selectedDate, onDateChange }: DailyViewProps) => {
                 )}
               </div>
 
-              {hasNotes && (
+              {hasEntries && (
                 <span className="absolute bottom-0.5 right-0.5 w-1.5 h-1.5 rounded-full bg-accent" />
               )}
             </button>
@@ -161,10 +162,11 @@ const DailyView = ({ selectedDate, onDateChange }: DailyViewProps) => {
       )}
 
       {noteDate && (
-        <NoteDialog
+        <SignatureDialog
           open={!!noteDate}
-          onClose={() => setNoteDate(null)}
-          date={noteDate}
+          onClose={() => { setNoteDate(null); setStoreVersion(v => v + 1); }}
+          signature={noteSignature}
+          dateStr={noteDate}
           dateLabel={noteLabel}
         />
       )}
