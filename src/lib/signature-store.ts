@@ -1,11 +1,13 @@
 // ===== Signature-Based Behavioral Memory System =====
 // Notes are keyed by day signature (干支), not calendar date.
 // The same signature repeats every 60 days, allowing pattern recall.
+// Database dependent
 
 import { HEAVENLY_STEMS, EARTHLY_BRANCHES } from './chinese-calendar';
 
 export const MISTAKE_TAGS = [
   'Self-Punishment',
+  'Hidden-Intellect',
   'Spent money emotionally',
   'Trusted too fast',
   'Conflict',
