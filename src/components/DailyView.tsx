@@ -132,7 +132,10 @@ const DailyView = ({ selectedDate, onDateChange }: DailyViewProps) => {
                 <span className={`text-base font-bold leading-tight ${cell.isOutside ? 'text-muted-foreground' : ''}`}>
                   {cell.day}
                 </span>
-                <span className="font-serif text-[10px] text-muted-foreground leading-tight">{stemBranch}</span>
+                <div className="flex flex-col items-center font-serif text-[10px] text-muted-foreground leading-none">
+                  <span>{stemBranch[0]}</span>
+                  <span>{stemBranch[1]}</span>
+                </div>
               </div>
 
               {/* Bottom: lunar day or solar term */}
