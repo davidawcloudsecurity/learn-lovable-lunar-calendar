@@ -48,6 +48,24 @@ export function getYearStemBranch(year: number) {
   };
 }
 
+// Get month stem-branch (traditional: 寅 is month 1, starting from 立春 ≈ Feb)
+// Year stem determines the starting month stem via the 五虎遁元 rule
+export function getMonthStemBranch(year: number, gregorianMonth: number) {
+  // Map Gregorian month (0-indexed) to lunar month (1-12): Feb=1, Mar=2, ..., Jan=12
+  const lunarMonth = ((gregorianMonth - 1 + 12) % 12) + 1; // gregorianMonth is 0-indexed
+  const yearStemIndex = ((year - 4) % 10 + 10) % 10;
+  // 五虎遁元: stem of first month based on year stem
+  const firstMonthStem = ((yearStemIndex % 5) * 2 + 2) % 10;
+  const stemIndex = (firstMonthStem + lunarMonth - 1) % 10;
+  const branchIndex = (lunarMonth - 1 + 2) % 12; // month 1 = 寅(index 2)
+  return {
+    stem: HEAVENLY_STEMS[stemIndex],
+    branch: EARTHLY_BRANCHES[branchIndex],
+    full: `${HEAVENLY_STEMS[stemIndex]}${EARTHLY_BRANCHES[branchIndex]}`,
+  };
+}
+
+
 // 12 two-hour periods (时辰) with zodiac animals
 export const SHICHEN = [
   { branch: '子', name: '子时', time: '23:00-01:00', animal: 0 },

@@ -1,5 +1,5 @@
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { getLunarDate, getYearStemBranch, HEAVENLY_STEMS, EARTHLY_BRANCHES } from '@/lib/chinese-calendar';
+import { getLunarDate, getYearStemBranch, getMonthStemBranch } from '@/lib/chinese-calendar';
 import HorseMascot from './HorseMascot';
 
 interface MonthlyViewProps {
@@ -52,13 +52,17 @@ const MonthlyView = ({ selectedDate, onDateChange, onViewChange }: MonthlyViewPr
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
         {MONTHS.map((name, i) => {
           const isCurrent = isCurrentYear && i === currentMonth;
+          const mSB = getMonthStemBranch(year, i);
           return (
             <button
               key={i}
               onClick={() => selectMonth(i)}
               className={`zodiac-card text-left ${isCurrent ? 'ring-2 ring-primary' : ''}`}
             >
-              <div className="font-serif font-bold text-sm">{name}</div>
+              <div className="flex items-baseline gap-1.5">
+                <span className="font-serif font-bold text-sm">{name}</span>
+                <span className="font-serif text-xs text-primary/70">{mSB.full}</span>
+              </div>
               <div className="text-[10px] text-muted-foreground mt-1">{getLunarRange(i)}</div>
             </button>
           );
@@ -68,9 +72,7 @@ const MonthlyView = ({ selectedDate, onDateChange, onViewChange }: MonthlyViewPr
       {/* Y/M Stem-Branch Summary (no day in monthly view) */}
       {(() => {
         const yearSB = getYearStemBranch(year);
-        const mIdx = selectedDate.getMonth();
-        const monthStem = HEAVENLY_STEMS[(year * 2 + mIdx) % 10];
-        const monthBranch = EARTHLY_BRANCHES[(mIdx + 2) % 12];
+        const monthSB = getMonthStemBranch(year, selectedDate.getMonth());
         return (
           <div className="flex items-end justify-end gap-3 mt-4 pr-2">
             <div className="flex flex-col items-end gap-1">
@@ -79,7 +81,7 @@ const MonthlyView = ({ selectedDate, onDateChange, onViewChange }: MonthlyViewPr
                 <span className="text-xs font-medium text-muted-foreground">Y</span>
               </div>
               <div className="flex items-baseline gap-2.5 text-primary/80">
-                <span className="font-serif text-2xl tracking-wide">{monthStem}{monthBranch}</span>
+                <span className="font-serif text-2xl tracking-wide">{monthSB.full}</span>
                 <span className="text-xs font-medium text-muted-foreground">M</span>
               </div>
             </div>
