@@ -33,7 +33,7 @@ export interface DaySignatureData {
 export function getDaySignature(date: Date): string {
   const ref = new Date(2000, 0, 1);
   const diff = Math.floor((date.getTime() - ref.getTime()) / 86400000);
-  const cycle = ((diff % 60) + 60) % 60;
+  const cycle = (((diff % 60) + 60) % 60 + 54) % 60; // Jan 1, 2000 = 戊午 (index 54)
   const stem = HEAVENLY_STEMS[cycle % 10];
   const branch = EARTHLY_BRANCHES[cycle % 12];
   return `${stem}${branch}`;
