@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { getLunarDate, getSolarTerm, loadNotes, getNotesForDate, HEAVENLY_STEMS, EARTHLY_BRANCHES, SOLAR_TERMS } from '@/lib/chinese-calendar';
-import NoteDialog from './NoteDialog';
+import { getLunarDate, getSolarTerm, HEAVENLY_STEMS, EARTHLY_BRANCHES, SOLAR_TERMS, getYearStemBranch, getMonthStemBranch } from '@/lib/chinese-calendar';
+import HorseMascot from './HorseMascot';
+import { getDaySignature, signatureHasEntries, loadSignatureStore } from '@/lib/signature-store';
+import SignatureDialog from './SignatureDialog';
 
 interface DailyViewProps {
   selectedDate: Date;
@@ -25,7 +27,7 @@ function getDayStemBranch(date: Date) {
   // Use a known reference: Jan 1, 2000 = 甲子 (index 0 in 60-day cycle... approximately)
   const ref = new Date(2000, 0, 1);
   const diff = Math.floor((date.getTime() - ref.getTime()) / 86400000);
-  const cycle = ((diff % 60) + 60) % 60;
+  const cycle = (((diff % 60) + 60) % 60 + 54) % 60; // Jan 1, 2000 = 戊午 (index 54)
   const stemIdx = cycle % 10;
   const branchIdx = cycle % 12;
   return `${HEAVENLY_STEMS[stemIdx]}${EARTHLY_BRANCHES[branchIdx]}`;
@@ -34,14 +36,11 @@ function getDayStemBranch(date: Date) {
 const DailyView = ({ selectedDate, onDateChange }: DailyViewProps) => {
   const [noteDate, setNoteDate] = useState<string | null>(null);
   const [noteLabel, setNoteLabel] = useState('');
-  const [notes, setNotes] = useState(loadNotes());
+  const [noteSignature, setNoteSignature] = useState('');
+  const [storeVersion, setStoreVersion] = useState(0);
 
   const year = selectedDate.getFullYear();
   const month = selectedDate.getMonth();
-
-  useEffect(() => {
-    if (!noteDate) setNotes(loadNotes());
-  }, [noteDate]);
 
   const firstDay = new Date(year, month, 1).getDay();
   const daysInMonth = new Date(year, month + 1, 0).getDate();
@@ -77,6 +76,8 @@ const DailyView = ({ selectedDate, onDateChange }: DailyViewProps) => {
     const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
     const d = new Date(year, month, day);
     const lunar = getLunarDate(d);
+    const sig = getDaySignature(d);
+    setNoteSignature(sig);
     setNoteLabel(`${d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })} · ${lunar.monthName}${lunar.dayName}`);
     setNoteDate(dateStr);
   };
@@ -113,7 +114,8 @@ const DailyView = ({ selectedDate, onDateChange }: DailyViewProps) => {
           const solarTerm = getSolarTerm(m, d);
           const dateStr = cell.isOutside ? '' : `${year}-${String(month + 1).padStart(2, '0')}-${String(cell.day).padStart(2, '0')}`;
           const isToday = !cell.isOutside && dateStr === todayStr;
-          const hasNotes = !cell.isOutside && getNotesForDate(notes, dateStr).length > 0;
+          const sig = getDaySignature(cell.date);
+          const hasEntries = !cell.isOutside && signatureHasEntries(sig);
           const lunarLabel = lunar.day === 1 ? `lm ${lunar.month}` : lunar.dayName;
           const solarAbbr = solarTerm ? SOLAR_TERM_ABBR[solarTerm.name] || solarTerm.name : null;
 
@@ -131,7 +133,10 @@ const DailyView = ({ selectedDate, onDateChange }: DailyViewProps) => {
                 <span className={`text-base font-bold leading-tight ${cell.isOutside ? 'text-muted-foreground' : ''}`}>
                   {cell.day}
                 </span>
-                <span className="font-serif text-[10px] text-muted-foreground leading-tight">{stemBranch}</span>
+                <div className="flex flex-col items-center font-serif text-[10px] text-muted-foreground leading-none">
+                  <span>{stemBranch[0]}</span>
+                  <span>{stemBranch[1]}</span>
+                </div>
               </div>
 
               {/* Bottom: lunar day or solar term */}
@@ -143,7 +148,7 @@ const DailyView = ({ selectedDate, onDateChange }: DailyViewProps) => {
                 )}
               </div>
 
-              {hasNotes && (
+              {hasEntries && (
                 <span className="absolute bottom-0.5 right-0.5 w-1.5 h-1.5 rounded-full bg-accent" />
               )}
             </button>
@@ -160,11 +165,44 @@ const DailyView = ({ selectedDate, onDateChange }: DailyViewProps) => {
         </div>
       )}
 
+      {/* Y/M/D Stem-Branch Summary */}
+      {(() => {
+        const yearSB = getYearStemBranch(year);
+        const monthSB = getMonthStemBranch(year, month);
+        const ref = new Date(2000, 0, 1);
+        const diff = Math.floor((selectedDate.getTime() - ref.getTime()) / 86400000);
+        const cycle = (((diff % 60) + 60) % 60 + 54) % 60;
+        const dayStem = HEAVENLY_STEMS[cycle % 10];
+        const dayBranch = EARTHLY_BRANCHES[cycle % 12];
+        return (
+          <div className="flex items-end justify-end gap-3 mt-4 pr-2">
+            <div className="flex flex-col items-end gap-1">
+              <div className="flex items-baseline gap-2.5 text-primary/80">
+                <span className="font-serif text-2xl tracking-wide">{yearSB.full}</span>
+                <span className="text-xs font-medium text-muted-foreground">Y</span>
+              </div>
+              <div className="flex items-baseline gap-2.5 text-primary/80">
+                <span className="font-serif text-2xl tracking-wide">{monthSB.full}</span>
+                <span className="text-xs font-medium text-muted-foreground">M</span>
+              </div>
+              <div className="flex items-baseline gap-2.5 text-primary/80">
+                <span className="font-serif text-2xl tracking-wide">{dayStem}{dayBranch}</span>
+                <span className="text-xs font-medium text-muted-foreground">D</span>
+              </div>
+            </div>
+            <div className="w-16 h-16">
+              <HorseMascot />
+            </div>
+          </div>
+        );
+      })()}
+
       {noteDate && (
-        <NoteDialog
+        <SignatureDialog
           open={!!noteDate}
-          onClose={() => setNoteDate(null)}
-          date={noteDate}
+          onClose={() => { setNoteDate(null); setStoreVersion(v => v + 1); }}
+          signature={noteSignature}
+          dateStr={noteDate}
           dateLabel={noteLabel}
         />
       )}
