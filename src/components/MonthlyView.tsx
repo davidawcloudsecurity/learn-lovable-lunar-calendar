@@ -1,5 +1,6 @@
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { getLunarDate } from '@/lib/chinese-calendar';
+import { getLunarDate, getYearStemBranch, HEAVENLY_STEMS, EARTHLY_BRANCHES } from '@/lib/chinese-calendar';
+import HorseMascot from './HorseMascot';
 
 interface MonthlyViewProps {
   selectedDate: Date;
@@ -63,6 +64,31 @@ const MonthlyView = ({ selectedDate, onDateChange, onViewChange }: MonthlyViewPr
           );
         })}
       </div>
+
+      {/* Y/M Stem-Branch Summary (no day in monthly view) */}
+      {(() => {
+        const yearSB = getYearStemBranch(year);
+        const mIdx = selectedDate.getMonth();
+        const monthStem = HEAVENLY_STEMS[(year * 2 + mIdx) % 10];
+        const monthBranch = EARTHLY_BRANCHES[(mIdx + 2) % 12];
+        return (
+          <div className="flex items-end justify-end gap-3 mt-4 pr-2">
+            <div className="flex flex-col items-end gap-1">
+              <div className="flex items-baseline gap-2.5 text-primary/80">
+                <span className="font-serif text-2xl tracking-wide">{yearSB.full}</span>
+                <span className="text-xs font-medium text-muted-foreground">Y</span>
+              </div>
+              <div className="flex items-baseline gap-2.5 text-primary/80">
+                <span className="font-serif text-2xl tracking-wide">{monthStem}{monthBranch}</span>
+                <span className="text-xs font-medium text-muted-foreground">M</span>
+              </div>
+            </div>
+            <div className="w-16 h-16">
+              <HorseMascot />
+            </div>
+          </div>
+        );
+      })()}
     </div>
   );
 };
