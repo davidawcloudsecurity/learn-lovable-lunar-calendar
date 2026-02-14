@@ -26,7 +26,7 @@ function getDayStemBranch(date: Date) {
   // Use a known reference: Jan 1, 2000 = 甲子 (index 0 in 60-day cycle... approximately)
   const ref = new Date(2000, 0, 1);
   const diff = Math.floor((date.getTime() - ref.getTime()) / 86400000);
-  const cycle = ((diff % 60) + 60) % 60;
+  const cycle = (((diff % 60) + 60) % 60 + 54) % 60; // Jan 1, 2000 = 戊午 (index 54)
   const stemIdx = cycle % 10;
   const branchIdx = cycle % 12;
   return `${HEAVENLY_STEMS[stemIdx]}${EARTHLY_BRANCHES[branchIdx]}`;

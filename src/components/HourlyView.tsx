@@ -57,7 +57,7 @@ const HourlyView = ({ selectedDate }: HourlyViewProps) => {
         // Day stem-branch
         const ref = new Date(2000, 0, 1);
         const diff = Math.floor((selectedDate.getTime() - ref.getTime()) / 86400000);
-        const cycle = ((diff % 60) + 60) % 60;
+        const cycle = (((diff % 60) + 60) % 60 + 54) % 60; // Jan 1, 2000 = 戊午 (index 54)
         const dayStem = HEAVENLY_STEMS[cycle % 10];
         const dayBranch = EARTHLY_BRANCHES[cycle % 12];
 
