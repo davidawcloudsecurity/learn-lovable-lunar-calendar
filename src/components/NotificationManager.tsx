@@ -31,6 +31,8 @@ export function NotificationManager() {
             const todayBranch = todaySig.slice(-1);
             const todayMatches = getPatternsByBranch(todayBranch);
 
+            console.log('Notification Check - Today:', todaySig, 'Branch:', todayBranch, 'Matches:', todayMatches.length);
+
             if (todayMatches.length > 0) {
                 const analysis = analyzeSignature(todayMatches.flatMap(m => m.entries));
                 if (analysis) {
@@ -50,6 +52,8 @@ export function NotificationManager() {
             const tomorrowSig = getDaySignature(tomorrow);
             const tomorrowBranch = tomorrowSig.slice(-1);
             const tomorrowMatches = getPatternsByBranch(tomorrowBranch);
+
+            console.log('Notification Check - Tomorrow:', tomorrowSig, 'Branch:', tomorrowBranch, 'Matches:', tomorrowMatches.length);
 
             if (tomorrowMatches.length > 0) {
                 const analysis = analyzeSignature(tomorrowMatches.flatMap(m => m.entries));
