@@ -139,3 +139,13 @@
     }
   }
 }
+
+@layer utilities {
+
+  /* This is an explicit definition. If this isn't here, 
+     Tailwind provides a default value for .text-2xl automatically. */
+  .text-2xl {
+    font-size: 1.2rem;
+    line-height: 2rem;
+  }
+}
