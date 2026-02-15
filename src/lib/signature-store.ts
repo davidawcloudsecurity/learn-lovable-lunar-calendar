@@ -1,11 +1,18 @@
 // ===== Signature-Based Behavioral Memory System =====
 // Notes are keyed by day signature (干支), not calendar date.
 // The same signature repeats every 60 days, allowing pattern recall.
+// Database dependent
 
-import { HEAVENLY_STEMS, EARTHLY_BRANCHES } from './chinese-calendar';
+import { HEAVENLY_STEMS, EARTHLY_BRANCHES, BaZiProfile, DEFAULT_PROFILE } from './chinese-calendar';
+
+export interface AppStoreData {
+  signatures: Record<string, DaySignatureData>;
+  profile: BaZiProfile | null;
+}
 
 export const MISTAKE_TAGS = [
   'Self-Punishment',
+  'Hidden-Intellect',
   'Spent money emotionally',
   'Trusted too fast',
   'Conflict',
@@ -42,19 +49,66 @@ export function getDaySignature(date: Date): string {
 // Storage key
 const STORAGE_KEY = 'zodiac-signature-store';
 
-// Load all signature data
-export function loadSignatureStore(): Record<string, DaySignatureData> {
+// Load the entire app store
+export function loadAppStore(): AppStoreData {
   try {
     const data = localStorage.getItem(STORAGE_KEY);
-    return data ? JSON.parse(data) : {};
+    let store: AppStoreData;
+
+    if (!data) {
+      store = { signatures: {}, profile: null };
+    } else {
+      const parsed = JSON.parse(data);
+      if (parsed && typeof parsed === 'object' && !parsed.signatures && !parsed.profile) {
+        // Old format: parsed is Record<string, DaySignatureData>
+        store = { signatures: parsed, profile: null };
+      } else {
+        store = {
+          signatures: parsed.signatures || {},
+          profile: parsed.profile || null
+        };
+      }
+    }
+
+    // Migration from old separate profile key
+    if (store.profile === null) {
+      const oldProfileData = localStorage.getItem('bazi-profile');
+      if (oldProfileData && oldProfileData !== 'null') {
+        try {
+          const oldProfile = JSON.parse(oldProfileData);
+          if (oldProfile && oldProfile.yearPillar) {
+            store.profile = oldProfile;
+            // Optionally save it now to the new location
+            saveAppStore(store);
+            // localStorage.removeItem('bazi-profile'); // Better to wait or leave it for safety
+          }
+        } catch (e) {
+          console.error('Failed to migrate old profile:', e);
+        }
+      }
+    }
+
+    return store;
   } catch {
-    return {};
+    return { signatures: {}, profile: null };    
   }
 }
 
-// Save store
-export function saveSignatureStore(store: Record<string, DaySignatureData>) {
+// Save the entire app store
+export function saveAppStore(store: AppStoreData) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(store));
+}
+
+// Load all signature data (Backward compatibility wrapper)
+export function loadSignatureStore(): Record<string, DaySignatureData> {
+  return loadAppStore().signatures;
+}
+
+// Save store (Backward compatibility wrapper)
+export function saveSignatureStore(signatures: Record<string, DaySignatureData>) {
+  const store = loadAppStore();
+  store.signatures = signatures;
+  saveAppStore(store);
 }
 
 // Get entries for a specific signature

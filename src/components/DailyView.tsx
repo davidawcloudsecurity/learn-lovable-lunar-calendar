@@ -4,6 +4,8 @@ import { getLunarDate, getSolarTerm, HEAVENLY_STEMS, EARTHLY_BRANCHES, SOLAR_TER
 import HorseMascot from './HorseMascot';
 import { getDaySignature, signatureHasEntries, loadSignatureStore } from '@/lib/signature-store';
 import SignatureDialog from './SignatureDialog';
+import { loadProfile, getProfileBranches } from '@/lib/bazi-profile';
+import { calculateRiskLevel } from '@/lib/bazi-calculator';
 
 interface DailyViewProps {
   selectedDate: Date;
@@ -38,6 +40,10 @@ const DailyView = ({ selectedDate, onDateChange }: DailyViewProps) => {
   const [noteLabel, setNoteLabel] = useState('');
   const [noteSignature, setNoteSignature] = useState('');
   const [storeVersion, setStoreVersion] = useState(0);
+
+  // Load user's BaZi profile for risk calculation
+  const profile = loadProfile();
+  const userBranches = getProfileBranches(profile);
 
   const year = selectedDate.getFullYear();
   const month = selectedDate.getMonth();
@@ -119,6 +125,12 @@ const DailyView = ({ selectedDate, onDateChange }: DailyViewProps) => {
           const lunarLabel = lunar.day === 1 ? `lm ${lunar.month}` : lunar.dayName;
           const solarAbbr = solarTerm ? SOLAR_TERM_ABBR[solarTerm.name] || solarTerm.name : null;
 
+          // Calculate BaZi risk level (only if profile exists)
+          const dailyBranch = stemBranch[1];
+          const riskInfo = userBranches.length > 0
+            ? calculateRiskLevel(dailyBranch, userBranches)
+            : null;
+
           return (
             <button
               key={i}
@@ -135,7 +147,19 @@ const DailyView = ({ selectedDate, onDateChange }: DailyViewProps) => {
                 </span>
                 <div className="flex flex-col items-center font-serif text-[10px] text-muted-foreground leading-none">
                   <span>{stemBranch[0]}</span>
-                  <span>{stemBranch[1]}</span>
+                  <span className="relative">
+                    {/* Risk level colored background - behind branch character only */}
+                    {!cell.isOutside && riskInfo && (
+                      <div
+                        className={`absolute inset-0 rounded-sm opacity-30 ${riskInfo.level === 'high' ? 'bg-red-500' :
+                          riskInfo.level === 'low' ? 'bg-green-500' :
+                            'bg-yellow-500'
+                          }`}
+                        title={riskInfo.reason}
+                      />
+                    )}
+                    <span className="relative z-10">{stemBranch[1]}</span>
+                  </span>
                 </div>
               </div>
 
@@ -164,6 +188,22 @@ const DailyView = ({ selectedDate, onDateChange }: DailyViewProps) => {
           ))}
         </div>
       )}
+
+      {/* Risk Level Legend */}
+      <div className="mt-3 px-1 text-xs space-y-0.5 border-t border-border/40 pt-2">
+        <div className="font-semibold text-primary">Daily Risk Levels (Work Focus):</div>
+        {userBranches.length > 0 ? (
+          <>
+            <div className="text-muted-foreground">🔴 High: Clash/Punishment with your chart</div>
+            <div className="text-muted-foreground">🟡 Medium: Harm or neutral</div>
+            <div className="text-muted-foreground">🟢 Low: Harmony/Support</div>
+          </>
+        ) : (
+          <div className="text-muted-foreground italic bg-muted/30 p-2 rounded mt-1">
+            Setting up your BaZi profile in the menu (⋮) to enable personalized risk analysis.
+          </div>
+        )}
+      </div>
 
       {/* Y/M/D Stem-Branch Summary */}
       {(() => {
