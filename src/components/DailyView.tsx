@@ -95,7 +95,7 @@ const DailyView = ({ selectedDate, onDateChange }: DailyViewProps) => {
         <button onClick={prevMonth} className="p-1 hover:bg-muted rounded-lg">
           <ChevronLeft className="w-5 h-5" />
         </button>
-        <h2 className="font-serif text-lg font-semibold">
+        <h2 className="font-serif text-xl font-semibold">
           {selectedDate.toLocaleDateString('en-US', { month: 'long' })}, {year}
         </h2>
         <button onClick={nextMonth} className="p-1 hover:bg-muted rounded-lg">
@@ -142,10 +142,10 @@ const DailyView = ({ selectedDate, onDateChange }: DailyViewProps) => {
             >
               {/* Top row: day number + stem-branch */}
               <div className="flex justify-between items-start w-full">
-                <span className={`text-base font-bold leading-tight ${cell.isOutside ? 'text-muted-foreground' : ''}`}>
+                <span className={`text-lg font-bold leading-tight ${cell.isOutside ? 'text-muted-foreground' : ''}`}>
                   {cell.day}
                 </span>
-                <div className="flex flex-col items-center font-serif text-[10px] text-muted-foreground leading-none">
+                <div className="flex flex-col items-center font-serif text-sm text-muted-foreground leading-none">
                   <span>{stemBranch[0]}</span>
                   <span className="relative">
                     {/* Risk level colored background - behind branch character only */}
@@ -166,9 +166,9 @@ const DailyView = ({ selectedDate, onDateChange }: DailyViewProps) => {
               {/* Bottom: lunar day or solar term */}
               <div className="mt-auto">
                 {solarAbbr ? (
-                  <span className="text-[10px] font-bold text-accent leading-tight">{solarAbbr}</span>
+                  <span className="text-xs font-bold text-accent leading-tight">{solarAbbr}</span>
                 ) : (
-                  <span className="text-[10px] text-primary leading-tight">{lunarLabel}</span>
+                  <span className="text-xs text-primary leading-tight">{lunarLabel}</span>
                 )}
               </div>
 
@@ -190,7 +190,7 @@ const DailyView = ({ selectedDate, onDateChange }: DailyViewProps) => {
       )}
 
       {/* Risk Level Legend */}
-      <div className="mt-3 px-1 text-xs space-y-0.5 border-t border-border/40 pt-2">
+      <div className="mt-3 px-1 text-sm space-y-0.5 border-t border-border/40 pt-2">
         <div className="font-semibold text-primary">Daily Risk Levels (Work Focus):</div>
         {userBranches.length > 0 ? (
           <>
@@ -219,15 +219,15 @@ const DailyView = ({ selectedDate, onDateChange }: DailyViewProps) => {
             <div className="flex flex-col items-end gap-1">
               <div className="flex items-baseline gap-2.5 text-primary/80">
                 <span className="font-serif text-2xl tracking-wide">{yearSB.full}</span>
-                <span className="text-xs font-medium text-muted-foreground">Y</span>
+                <span className="text-sm font-medium text-muted-foreground">Y</span>
               </div>
               <div className="flex items-baseline gap-2.5 text-primary/80">
                 <span className="font-serif text-2xl tracking-wide">{monthSB.full}</span>
-                <span className="text-xs font-medium text-muted-foreground">M</span>
+                <span className="text-sm font-medium text-muted-foreground">M</span>
               </div>
               <div className="flex items-baseline gap-2.5 text-primary/80">
                 <span className="font-serif text-2xl tracking-wide">{dayStem}{dayBranch}</span>
-                <span className="text-xs font-medium text-muted-foreground">D</span>
+                <span className="text-sm font-medium text-muted-foreground">D</span>
               </div>
             </div>
             <div className="w-16 h-16">
