@@ -1,5 +1,24 @@
 // ===== Chinese Zodiac Calendar Utilities =====
 // Contains zodiac animals, heavenly stems, earthly branches, solar terms, and lunar calendar data
+export interface BaZiPillar {
+  stem: string;  // 天干 (Heavenly Stem)
+  branch: string; // 地支 (Earthly Branch)
+}
+
+export interface BaZiProfile {
+  yearPillar: BaZiPillar;   // 年柱 - Year Pillar (Roots/Ancestors)
+  monthPillar: BaZiPillar;  // 月柱 - Career/Authority
+  dayPillar: BaZiPillar;    // 日柱 - Day Pillar (Self/Day Master)
+  hourPillar: BaZiPillar;   // 时柱 - Work/Output
+}
+
+// Default profile - User's chart
+export const DEFAULT_PROFILE: BaZiProfile = {
+  yearPillar: { stem: '', branch: '' },
+  monthPillar: { stem: '', branch: '' },
+  hourPillar: { stem: '', branch: '' },
+  dayPillar: { stem: '', branch: '' },
+};
 
 // 12 Zodiac animals with emoji and Chinese name
 export const ZODIAC_ANIMALS = [
