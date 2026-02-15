@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import {
     Dialog,
     DialogContent,
@@ -20,6 +20,16 @@ export function DataManagementDialog({ open, onClose }: DataManagementDialogProp
     const { toast } = useToast();
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [importStatus, setImportStatus] = useState<'idle' | 'success' | 'error'>('idle');
+
+    // Reset state when the dialog is opened
+    useEffect(() => {
+        if (open) {
+            setImportStatus('idle');
+            if (fileInputRef.current) {
+                fileInputRef.current.value = '';
+            }
+        }
+    }, [open]);
 
     const handleExport = () => {
         const json = exportAppStoreJson();
