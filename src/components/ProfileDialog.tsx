@@ -21,19 +21,19 @@ const PillarSelect = ({
 }) => {
     return (
         <div className="space-y-2">
-            <Label className="text-xs font-medium text-muted-foreground">{label}</Label>
+            <Label className="text-sm font-medium text-muted-foreground">{label}</Label>
             <div className="grid grid-cols-2 gap-2">
                 <select
                     value={pillar.stem}
                     onChange={(e) => onChange({ ...pillar, stem: e.target.value })}
-                    className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                    className="flex h-10 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
                 >
                     {HEAVENLY_STEMS.map(s => <option key={s} value={s}>{s}</option>)}
                 </select>
                 <select
                     value={pillar.branch}
                     onChange={(e) => onChange({ ...pillar, branch: e.target.value })}
-                    className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                    className="flex h-10 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
                 >
                     {EARTHLY_BRANCHES.map(b => <option key={b} value={b}>{b}</option>)}
                 </select>
