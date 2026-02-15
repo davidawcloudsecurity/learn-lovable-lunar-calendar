@@ -45,14 +45,13 @@ const CalendarHeader = ({ view, onViewChange, selectedDate }: CalendarHeaderProp
     <header className="bg-card border-b border-border px-4 py-3">
       {/* Title row */}
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <HorseMascot small />
-          <div>
-            <h1 className="text-xl font-bold leading-tight">Chinese Zodiac Calendar</h1>
-            <p className="text-sm text-muted-foreground">
-              {year} · {stemBranch.full}年 · {stemBranch.element}{zodiac.cn}年
-            </p>
-          </div>
+        <div className="flex flex-col">
+          <h1 className="text-xl font-bold leading-tight">
+            {selectedDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+          </h1>
+          <p className="text-sm text-muted-foreground">
+            {stemBranch.full}年 · {stemBranch.element}{zodiac.cn}年
+          </p>
         </div>
 
         <div className="flex items-center gap-1">
