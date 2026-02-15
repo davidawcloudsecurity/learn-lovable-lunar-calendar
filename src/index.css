@@ -5,6 +5,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;600;700&family=Noto+Serif+SC:wght@400;600;700&display=swap');
 
 @layer base {
+  html {
+    font-size: 115%;
+  }
+
   :root {
     --background: 80 25% 97%;
     --foreground: 150 20% 15%;
@@ -67,7 +71,9 @@
     font-family: 'Noto Sans SC', sans-serif;
   }
 
-  h1, h2, h3 {
+  h1,
+  h2,
+  h3 {
     font-family: 'Noto Serif SC', serif;
   }
 }
@@ -106,8 +112,15 @@
   }
 
   @keyframes mascotBounce {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-8px); }
+
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+
+    50% {
+      transform: translateY(-8px);
+    }
   }
 
   .fade-in {
@@ -115,7 +128,14 @@
   }
 
   @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(8px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 }
