@@ -71,6 +71,27 @@ export function DataManagementDialog({ open, onClose }: DataManagementDialogProp
                 });
             }
         };
+
+        reader.onerror = (e) => {
+            console.error('FileReader error:', e);
+            setImportStatus('error');
+            toast({
+                variant: "destructive",
+                title: "File Read Error",
+                description: "An error occurred while reading the file.",
+            });
+        };
+
+        reader.onabort = () => {
+            console.warn('FileReader aborted');
+            setImportStatus('error');
+            toast({
+                variant: "destructive",
+                title: "Read Aborted",
+                description: "The file reading process was canceled.",
+            });
+        };
+
         reader.readAsText(file);
 
         // Reset input
