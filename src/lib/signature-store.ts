@@ -67,7 +67,9 @@ export function loadAppStore(): AppStoreData {
         store = {
           signatures: parsed.signatures || {},
           profile: parsed.profile || null,
-          customTags: parsed.customTags || [...MISTAKE_TAGS]
+          customTags: parsed.customTags !== undefined && parsed.customTags !== null
+            ? parsed.customTags
+            : [...MISTAKE_TAGS]
         };
       }
     }
@@ -153,7 +155,7 @@ export function deleteSignatureEntry(signature: string, entryId: string) {
 
 export function loadCustomTags(): string[] {
   const store = loadAppStore();
-  if (!store.customTags || store.customTags.length === 0) {
+  if (store.customTags === undefined || store.customTags === null) {
     return [...MISTAKE_TAGS];
   }
   return store.customTags;
@@ -278,7 +280,7 @@ export function importAppStoreJson(json: string): boolean {
       const newStore: AppStoreData = {
         signatures: sigs || {},
         profile: prof || null,
-        customTags: customTags || [...MISTAKE_TAGS]
+        customTags: (customTags !== undefined && customTags !== null) ? customTags : [...MISTAKE_TAGS]
       };
 
       saveAppStore(newStore);
