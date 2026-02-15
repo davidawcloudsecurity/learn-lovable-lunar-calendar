@@ -90,7 +90,7 @@ export function loadAppStore(): AppStoreData {
 
     return store;
   } catch {
-    return { signatures: {}, profile: null };    
+    return { signatures: {}, profile: null };
   }
 }
 
@@ -179,4 +179,32 @@ export function analyzeSignature(entries: SignatureEntry[]) {
 export function signatureHasEntries(signature: string): boolean {
   const store = loadSignatureStore();
   return (store[signature]?.entries.length || 0) > 0;
+}
+
+// Export the entire store as a JSON string
+export function exportAppStoreJson(): string {
+  const store = loadAppStore();
+  return JSON.stringify(store, null, 2);
+}
+
+// Import data into the app store
+export function importAppStoreJson(json: string): boolean {
+  try {
+    const parsed = JSON.parse(json);
+
+    // Basic validation: must have signatures or profile
+    if (parsed && typeof parsed === 'object') {
+      const newStore: AppStoreData = {
+        signatures: parsed.signatures || {},
+        profile: parsed.profile || null
+      };
+
+      saveAppStore(newStore);
+      return true;
+    }
+    return false;
+  } catch (e) {
+    console.error('Failed to import data:', e);
+    return false;
+  }
 }
