@@ -213,6 +213,26 @@ export function signatureHasEntries(signature: string): boolean {
   return (store[signature]?.entries.length || 0) > 0;
 }
 
+// Get all patterns associated with a specific earthly branch (e.g. all "卯" days)
+export function getPatternsByBranch(branch: string): { signature: string, entries: SignatureEntry[] }[] {
+  const store = loadSignatureStore();
+  return Object.entries(store)
+    .filter(([sig]) => sig.endsWith(branch))
+    .map(([sig, data]) => ({
+      signature: sig,
+      entries: data.entries
+    }))
+    .filter(item => item.entries.length > 0);
+}
+
+// Calculate the earthly branch for tomorrow
+export function getTomorrowBranch(): string {
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  const sig = getDaySignature(tomorrow);
+  return sig.slice(-1); // Return the branch (last character)
+}
+
 // Export the entire store as a JSON string
 export function exportAppStoreJson(): string {
   const store = loadAppStore();
