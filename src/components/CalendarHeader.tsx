@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { MoreVertical, Settings, Info, Search, Clock, Calendar, CalendarDays, CalendarRange } from 'lucide-react';
+import { MoreVertical, Settings, Info, Search, Clock, Calendar, CalendarDays, CalendarRange, Database } from 'lucide-react';
 import HorseMascot from './HorseMascot';
 import { getYearZodiac, getYearStemBranch } from '@/lib/chinese-calendar';
 import {
@@ -11,6 +11,7 @@ import {
   DropdownMenuLabel
 } from '@/components/ui/dropdown-menu';
 import { ProfileDialog } from './ProfileDialog';
+import { DataManagementDialog } from './DataManagementDialog';
 import {
   Dialog,
   DialogContent,
@@ -37,6 +38,7 @@ const VIEWS: { key: ViewType; label: string; cn: string; icon: any }[] = [
 const CalendarHeader = ({ view, onViewChange, selectedDate }: CalendarHeaderProps) => {
   const [profileOpen, setProfileOpen] = useState(false);
   const [aboutOpen, setAboutOpen] = useState(false);
+  const [dataOpen, setDataOpen] = useState(false);
   const year = selectedDate.getFullYear();
   const zodiac = getYearZodiac(year);
   const stemBranch = getYearStemBranch(year);
@@ -91,6 +93,10 @@ const CalendarHeader = ({ view, onViewChange, selectedDate }: CalendarHeaderProp
                 <Settings className="mr-2 h-4 w-4" />
                 <span>BaZi Settings</span>
               </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setDataOpen(true)}>
+                <Database className="mr-2 h-4 w-4" />
+                <span>Data Management</span>
+              </DropdownMenuItem>
               <DropdownMenuItem onClick={() => setAboutOpen(true)}>
                 <Info className="mr-2 h-4 w-4" />
                 <span>About</span>
@@ -101,6 +107,7 @@ const CalendarHeader = ({ view, onViewChange, selectedDate }: CalendarHeaderProp
       </div>
 
       <ProfileDialog open={profileOpen} onClose={() => setProfileOpen(false)} />
+      <DataManagementDialog open={dataOpen} onClose={() => setDataOpen(false)} />
 
       <Dialog open={aboutOpen} onOpenChange={setAboutOpen}>
         <DialogContent className="max-w-xs">
