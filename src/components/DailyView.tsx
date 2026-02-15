@@ -125,9 +125,11 @@ const DailyView = ({ selectedDate, onDateChange }: DailyViewProps) => {
           const lunarLabel = lunar.day === 1 ? `lm ${lunar.month}` : lunar.dayName;
           const solarAbbr = solarTerm ? SOLAR_TERM_ABBR[solarTerm.name] || solarTerm.name : null;
 
-          // Calculate BaZi risk level
-          const dailyBranch = stemBranch[1]; // Get the branch (second character)
-          const riskInfo = calculateRiskLevel(dailyBranch, userBranches);
+          // Calculate BaZi risk level (only if profile exists)
+          const dailyBranch = stemBranch[1];
+          const riskInfo = userBranches.length > 0
+            ? calculateRiskLevel(dailyBranch, userBranches)
+            : null;
 
           return (
             <button
@@ -147,7 +149,7 @@ const DailyView = ({ selectedDate, onDateChange }: DailyViewProps) => {
                   <span>{stemBranch[0]}</span>
                   <span className="relative">
                     {/* Risk level colored background - behind branch character only */}
-                    {!cell.isOutside && (
+                    {!cell.isOutside && riskInfo && (
                       <div
                         className={`absolute inset-0 rounded-sm opacity-30 ${riskInfo.level === 'high' ? 'bg-red-500' :
                           riskInfo.level === 'low' ? 'bg-green-500' :
@@ -190,9 +192,17 @@ const DailyView = ({ selectedDate, onDateChange }: DailyViewProps) => {
       {/* Risk Level Legend */}
       <div className="mt-3 px-1 text-xs space-y-0.5 border-t border-border/40 pt-2">
         <div className="font-semibold text-primary">Daily Risk Levels (Work Focus):</div>
-        <div className="text-muted-foreground">🔴 High: Clash/Punishment with your chart</div>
-        <div className="text-muted-foreground">🟡 Medium: Harm or neutral</div>
-        <div className="text-muted-foreground">🟢 Low: Harmony/Support</div>
+        {userBranches.length > 0 ? (
+          <>
+            <div className="text-muted-foreground">🔴 High: Clash/Punishment with your chart</div>
+            <div className="text-muted-foreground">🟡 Medium: Harm or neutral</div>
+            <div className="text-muted-foreground">🟢 Low: Harmony/Support</div>
+          </>
+        ) : (
+          <div className="text-muted-foreground italic bg-muted/30 p-2 rounded mt-1">
+            Setting up your BaZi profile in the menu (⋮) to enable personalized risk analysis.
+          </div>
+        )}
       </div>
 
       {/* Y/M/D Stem-Branch Summary */}
