@@ -8,6 +8,7 @@ import { HEAVENLY_STEMS, EARTHLY_BRANCHES, BaZiProfile, DEFAULT_PROFILE } from '
 export interface AppStoreData {
   signatures: Record<string, DaySignatureData>;
   profile: BaZiProfile | null;
+  customTags?: string[]; // Dynamic behavioral patterns
 }
 
 export const MISTAKE_TAGS = [
@@ -21,7 +22,7 @@ export const MISTAKE_TAGS = [
   'Avoided responsibility',
 ] as const;
 
-export type MistakeTag = typeof MISTAKE_TAGS[number];
+export type MistakeTag = string;
 
 export interface SignatureEntry {
   id: string;
@@ -61,11 +62,12 @@ export function loadAppStore(): AppStoreData {
       const parsed = JSON.parse(data);
       if (parsed && typeof parsed === 'object' && !parsed.signatures && !parsed.profile) {
         // Old format: parsed is Record<string, DaySignatureData>
-        store = { signatures: parsed, profile: null };
+        store = { signatures: parsed, profile: null, customTags: [...MISTAKE_TAGS] };
       } else {
         store = {
           signatures: parsed.signatures || {},
-          profile: parsed.profile || null
+          profile: parsed.profile || null,
+          customTags: parsed.customTags || [...MISTAKE_TAGS]
         };
       }
     }
@@ -147,6 +149,36 @@ export function deleteSignatureEntry(signature: string, entryId: string) {
   }
 }
 
+// --- Custom Tag Management ---
+
+export function loadCustomTags(): string[] {
+  const store = loadAppStore();
+  if (!store.customTags || store.customTags.length === 0) {
+    return [...MISTAKE_TAGS];
+  }
+  return store.customTags;
+}
+
+export function saveCustomTags(tags: string[]) {
+  const store = loadAppStore();
+  store.customTags = tags;
+  saveAppStore(store);
+}
+
+export function addCustomTag(tag: string): boolean {
+  const tags = loadCustomTags();
+  const trimmed = tag.trim();
+  if (!trimmed || tags.includes(trimmed)) return false;
+
+  saveCustomTags([...tags, trimmed]);
+  return true;
+}
+
+export function deleteCustomTag(tag: string) {
+  const tags = loadCustomTags();
+  saveCustomTags(tags.filter(t => t !== tag));
+}
+
 // Analyze pattern for a signature
 export function analyzeSignature(entries: SignatureEntry[]) {
   if (entries.length === 0) return null;
@@ -215,10 +247,18 @@ export function importAppStoreJson(json: string): boolean {
       );
     }
 
-    if (hasValidSigs && hasValidProf) {
+    // 4. Validate customTags (must be array of strings if it exists)
+    const customTags = parsed.customTags;
+    let hasValidTags = !customTags || Array.isArray(customTags);
+    if (Array.isArray(customTags)) {
+      hasValidTags = customTags.every(t => typeof t === 'string');
+    }
+
+    if (hasValidSigs && hasValidProf && hasValidTags) {
       const newStore: AppStoreData = {
         signatures: sigs || {},
-        profile: prof || null
+        profile: prof || null,
+        customTags: customTags || [...MISTAKE_TAGS]
       };
 
       saveAppStore(newStore);
