@@ -1,5 +1,5 @@
-         import { useState } from 'react';
-import { MoreVertical, Settings, Info } from 'lucide-react';
+import { useState } from 'react';
+import { MoreVertical, Settings, Info, Search, Clock, Calendar, CalendarDays, CalendarRange } from 'lucide-react';
 import HorseMascot from './HorseMascot';
 import { getYearZodiac, getYearStemBranch } from '@/lib/chinese-calendar';
 import {
@@ -27,11 +27,11 @@ interface CalendarHeaderProps {
   selectedDate: Date;
 }
 
-const VIEWS: { key: ViewType; label: string; cn: string }[] = [
-  { key: 'hourly', label: 'Hour', cn: '时' },
-  { key: 'daily', label: 'Day', cn: '日' },
-  { key: 'monthly', label: 'Month', cn: '月' },
-  { key: 'yearly', label: 'Year', cn: '年' },
+const VIEWS: { key: ViewType; label: string; cn: string; icon: any }[] = [
+  { key: 'hourly', label: 'Hour', cn: '时', icon: Clock },
+  { key: 'daily', label: 'Day', cn: '日', icon: Calendar },
+  { key: 'monthly', label: 'Month', cn: '月', icon: CalendarDays },
+  { key: 'yearly', label: 'Year', cn: '年', icon: CalendarRange },
 ];
 
 const CalendarHeader = ({ view, onViewChange, selectedDate }: CalendarHeaderProps) => {
@@ -44,35 +44,61 @@ const CalendarHeader = ({ view, onViewChange, selectedDate }: CalendarHeaderProp
   return (
     <header className="bg-card border-b border-border px-4 py-3">
       {/* Title row */}
-      <div className="flex items-center justify-between mb-3">
+      <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <HorseMascot small />
           <div>
             <h1 className="text-xl font-bold leading-tight">Chinese Zodiac Calendar</h1>
             <p className="text-sm text-muted-foreground">
-              {year} · {stemBranch.full}年 · {stemBranch.element}{zodiac.cn}年 · {zodiac.emoji} {zodiac.name}
+              {year} · {stemBranch.full}年 · {stemBranch.element}{zodiac.cn}年
             </p>
           </div>
         </div>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <button className="p-1 hover:bg-muted rounded-full transition-colors">
-              <MoreVertical className="w-5 h-5 text-muted-foreground" />
-            </button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-48">
-            <DropdownMenuLabel>Calendar Menu</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => setProfileOpen(true)}>
-              <Settings className="mr-2 h-4 w-4" />
-              <span>BaZi Settings</span>
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => setAboutOpen(true)}>
-              <Info className="mr-2 h-4 w-4" />
-              <span>About</span>
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+
+        <div className="flex items-center gap-1">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button className="p-1 hover:bg-muted rounded-full transition-colors flex items-center justify-center">
+                <Search className="w-5 h-5 text-muted-foreground" />
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-44">
+              <DropdownMenuLabel>Switch View</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              {VIEWS.map(v => (
+                <DropdownMenuItem
+                  key={v.key}
+                  onClick={() => onViewChange(v.key)}
+                  className={view === v.key ? 'bg-muted font-bold' : ''}
+                >
+                  <v.icon className="mr-2 h-4 w-4 opacity-70" />
+                  <span className="flex-1">{v.label}</span>
+                  <span className="ml-2 text-xs opacity-40 font-serif">{v.cn}</span>
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button className="p-1 hover:bg-muted rounded-full transition-colors">
+                <MoreVertical className="w-5 h-5 text-muted-foreground" />
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-48">
+              <DropdownMenuLabel>Calendar Menu</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={() => setProfileOpen(true)}>
+                <Settings className="mr-2 h-4 w-4" />
+                <span>BaZi Settings</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setAboutOpen(true)}>
+                <Info className="mr-2 h-4 w-4" />
+                <span>About</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       </div>
 
       <ProfileDialog open={profileOpen} onClose={() => setProfileOpen(false)} />
@@ -86,26 +112,11 @@ const CalendarHeader = ({ view, onViewChange, selectedDate }: CalendarHeaderProp
             </DialogDescription>
           </DialogHeader>
           <div className="text-sm text-muted-foreground space-y-2 py-2">
-            <p>Version 1.0.0</p>
-            <p>Calculates daily interactions (Clash, Punishment, Harmony) against your unique 4-pillar chart.</p>
+            <p>Version 1.1.0</p>
+            <p>PWA enabled for standalone mobile experience.</p>
           </div>
         </DialogContent>
       </Dialog>
-
-      {/* View tabs */}
-      <div className="flex gap-1 bg-muted rounded-lg p-1">
-        {VIEWS.map(v => (
-          <button
-            key={v.key}
-            onClick={() => onViewChange(v.key)}
-            className={`view-tab flex-1 text-center ${view === v.key ? 'view-tab-active' : 'view-tab-inactive'
-              }`}
-          >
-            <span className="block text-sm">{v.cn}</span>
-            <span className="block text-xs opacity-80">{v.label}</span>
-          </button>
-        ))}
-      </div>
     </header>
   );
 };
