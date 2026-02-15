@@ -90,7 +90,7 @@ export function loadAppStore(): AppStoreData {
 
     return store;
   } catch {
-    return { signatures: {}, profile: null };    
+    return { signatures: {}, profile: null };
   }
 }
 
@@ -179,4 +179,55 @@ export function analyzeSignature(entries: SignatureEntry[]) {
 export function signatureHasEntries(signature: string): boolean {
   const store = loadSignatureStore();
   return (store[signature]?.entries.length || 0) > 0;
+}
+
+// Export the entire store as a JSON string
+export function exportAppStoreJson(): string {
+  const store = loadAppStore();
+  return JSON.stringify(store, null, 2);
+}
+
+// Import data into the app store
+export function importAppStoreJson(json: string): boolean {
+  try {
+    const parsed = JSON.parse(json);
+
+    // 1. Reject if not an object or if it's an array/null
+    if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
+      return false;
+    }
+
+    // 2. Validate signatures (must be a plain object if it exists)
+    const sigs = parsed.signatures;
+    const hasValidSigs = !sigs || (typeof sigs === 'object' && sigs !== null && !Array.isArray(sigs));
+
+    // 3. Validate profile shape (must be null or have the expected pillar structure)
+    const prof = parsed.profile;
+    let hasValidProf = prof === null || prof === undefined;
+
+    if (prof && typeof prof === 'object' && !Array.isArray(prof)) {
+      // Basic shape check for BaZiProfile pillars
+      const pillars = ['yearPillar', 'monthPillar', 'dayPillar', 'hourPillar'];
+      hasValidProf = pillars.every(p =>
+        prof[p] && typeof prof[p] === 'object' &&
+        typeof prof[p].stem === 'string' &&
+        typeof prof[p].branch === 'string'
+      );
+    }
+
+    if (hasValidSigs && hasValidProf) {
+      const newStore: AppStoreData = {
+        signatures: sigs || {},
+        profile: prof || null
+      };
+
+      saveAppStore(newStore);
+      return true;
+    }
+
+    return false;
+  } catch (e) {
+    console.error('Failed to import data:', e);
+    return false;
+  }
 }
