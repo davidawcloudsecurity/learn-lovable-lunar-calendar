@@ -90,7 +90,7 @@ export function loadAppStore(): AppStoreData {
 
     return store;
   } catch {
-    return { signatures: {}, profile: DEFAULT_PROFILE };
+    return { signatures: {}, profile: null };    
   }
 }
 
