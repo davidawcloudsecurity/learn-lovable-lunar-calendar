@@ -1,4 +1,4 @@
-import { useState } from 'react';
+         import { useState } from 'react';
 import { MoreVertical, Settings, Info } from 'lucide-react';
 import HorseMascot from './HorseMascot';
 import { getYearZodiac, getYearStemBranch } from '@/lib/chinese-calendar';
@@ -48,8 +48,8 @@ const CalendarHeader = ({ view, onViewChange, selectedDate }: CalendarHeaderProp
         <div className="flex items-center gap-2">
           <HorseMascot small />
           <div>
-            <h1 className="text-lg font-bold leading-tight">Chinese Zodiac Calendar</h1>
-            <p className="text-xs text-muted-foreground">
+            <h1 className="text-xl font-bold leading-tight">Chinese Zodiac Calendar</h1>
+            <p className="text-sm text-muted-foreground">
               {year} · {stemBranch.full}年 · {stemBranch.element}{zodiac.cn}年 · {zodiac.emoji} {zodiac.name}
             </p>
           </div>
@@ -85,7 +85,7 @@ const CalendarHeader = ({ view, onViewChange, selectedDate }: CalendarHeaderProp
               A personalized BaZi-aware Chinese Zodiac calendar focused on work risk analysis and behavioral patterns.
             </DialogDescription>
           </DialogHeader>
-          <div className="text-xs text-muted-foreground space-y-2 py-2">
+          <div className="text-sm text-muted-foreground space-y-2 py-2">
             <p>Version 1.0.0</p>
             <p>Calculates daily interactions (Clash, Punishment, Harmony) against your unique 4-pillar chart.</p>
           </div>
@@ -101,8 +101,8 @@ const CalendarHeader = ({ view, onViewChange, selectedDate }: CalendarHeaderProp
             className={`view-tab flex-1 text-center ${view === v.key ? 'view-tab-active' : 'view-tab-inactive'
               }`}
           >
-            <span className="block text-xs">{v.cn}</span>
-            <span className="block text-[10px] opacity-80">{v.label}</span>
+            <span className="block text-sm">{v.cn}</span>
+            <span className="block text-xs opacity-80">{v.label}</span>
           </button>
         ))}
       </div>
