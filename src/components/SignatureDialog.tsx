@@ -56,10 +56,10 @@ const SignatureDialog = ({ open, onClose, signature, dateLabel, dateStr }: Signa
       <DialogContent className="max-w-md">
         <DialogHeader>
           <DialogTitle className="font-serif flex items-center gap-2">
-            <span className="text-2xl">{signature}</span>
-            <span className="text-sm font-normal text-muted-foreground">Day Signature</span>
+            <span className="text-3xl">{signature}</span>
+            <span className="text-base font-normal text-muted-foreground">Day Signature</span>
           </DialogTitle>
-          <p className="text-xs text-muted-foreground">{dateLabel}</p>
+          <p className="text-sm text-muted-foreground">{dateLabel}</p>
         </DialogHeader>
 
         {/* Warning Panel */}
@@ -70,22 +70,22 @@ const SignatureDialog = ({ open, onClose, signature, dateLabel, dateStr }: Signa
               <span>⚠ Pattern Warning — {signature}</span>
             </div>
 
-            <div className="grid grid-cols-2 gap-2 text-xs">
+            <div className="grid grid-cols-2 gap-2 text-sm">
               <div className="bg-background/60 rounded p-2">
                 <div className="text-muted-foreground">Past logs</div>
-                <div className="text-lg font-bold text-foreground">{analysis.totalLogs}</div>
+                <div className="text-xl font-bold text-foreground">{analysis.totalLogs}</div>
               </div>
               <div className="bg-background/60 rounded p-2">
                 <div className="text-muted-foreground">Top pattern</div>
-                <div className="text-sm font-semibold text-foreground">{analysis.topTag}</div>
+                <div className="text-base font-semibold text-foreground">{analysis.topTag}</div>
               </div>
             </div>
 
             {/* Last 3 entries */}
             <div className="space-y-1">
-              <div className="text-xs font-medium text-muted-foreground">Recent entries on this signature:</div>
+              <div className="text-sm font-medium text-muted-foreground">Recent entries on this signature:</div>
               {analysis.lastThree.map(e => (
-                <div key={e.id} className="text-xs bg-background/60 rounded px-2 py-1.5 flex justify-between items-start">
+                <div key={e.id} className="text-sm bg-background/60 rounded px-2 py-1.5 flex justify-between items-start">
                   <div>
                     <span className="font-medium">{e.tag}</span>
                     {e.text && <span className="text-muted-foreground"> — {e.text}</span>}
@@ -127,13 +127,13 @@ const SignatureDialog = ({ open, onClose, signature, dateLabel, dateStr }: Signa
 
         {/* Log new entry */}
         <div className="border-t border-border pt-3 space-y-3">
-          <div className="text-xs font-medium text-muted-foreground">Log behavior pattern:</div>
+          <div className="text-sm font-medium text-muted-foreground">Log behavior pattern:</div>
           <div className="flex flex-wrap gap-1.5">
             {MISTAKE_TAGS.map(tag => (
               <button
                 key={tag}
                 onClick={() => setSelectedTag(selectedTag === tag ? null : tag)}
-                className={`text-xs px-2.5 py-1.5 rounded-full border transition-colors
+                className={`text-sm px-2.5 py-1.5 rounded-full border transition-colors
                   ${selectedTag === tag
                     ? 'bg-primary text-primary-foreground border-primary'
                     : 'bg-muted border-border hover:border-primary/50 text-foreground'
