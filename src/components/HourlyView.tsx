@@ -28,7 +28,7 @@ const HourlyView = ({ selectedDate }: HourlyViewProps) => {
   return (
     <div className="p-4 fade-in">
       <h2 className="font-serif text-center text-lg font-semibold mb-0">{dateLabel}</h2>
-      <div className="text-center text-sm text-primary font-medium bg-secondary/60 rounded py-1 mb-4">{dayName}</div>
+      <div className="text-center text-base text-primary font-medium bg-secondary/60 rounded py-1 mb-4">{dayName}</div>
 
       <div className="flex flex-col items-end pr-4 gap-1">
         {SHICHEN.map((shi, i) => {
@@ -63,15 +63,15 @@ const HourlyView = ({ selectedDate }: HourlyViewProps) => {
             <div className="flex flex-col items-end gap-1">
               <div className="flex items-baseline gap-2.5 text-primary/80">
                 <span className="font-serif text-2xl tracking-wide">{yearSB.full}</span>
-                <span className="text-xs font-medium text-muted-foreground">Y</span>
+                <span className="text-sm font-medium text-muted-foreground">Y</span>
               </div>
               <div className="flex items-baseline gap-2.5 text-primary/80">
                 <span className="font-serif text-2xl tracking-wide">{monthSB.full}</span>
-                <span className="text-xs font-medium text-muted-foreground">M</span>
+                <span className="text-sm font-medium text-muted-foreground">M</span>
               </div>
               <div className="flex items-baseline gap-2.5 text-primary/80">
                 <span className="font-serif text-2xl tracking-wide">{dayStem}{dayBranch}</span>
-                <span className="text-xs font-medium text-muted-foreground">D</span>
+                <span className="text-sm font-medium text-muted-foreground">D</span>
               </div>
             </div>
             <div className="w-16 h-16">

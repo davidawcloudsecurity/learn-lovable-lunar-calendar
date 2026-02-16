@@ -2,15 +2,19 @@ import { useState, useEffect, useMemo } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { Trash2, AlertTriangle, ChevronDown, ChevronUp } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Trash2, AlertTriangle, ChevronDown, ChevronUp, Settings, Plus, X } from 'lucide-react';
 import {
-  MISTAKE_TAGS,
   MistakeTag,
   SignatureEntry,
   getSignatureEntries,
   addSignatureEntry,
   deleteSignatureEntry,
   analyzeSignature,
+  loadCustomTags,
+  addCustomTag,
+  deleteCustomTag,
+  loadSignatureStore,
 } from '@/lib/signature-store';
 
 interface SignatureDialogProps {
@@ -23,16 +27,21 @@ interface SignatureDialogProps {
 
 const SignatureDialog = ({ open, onClose, signature, dateLabel, dateStr }: SignatureDialogProps) => {
   const [entries, setEntries] = useState<SignatureEntry[]>([]);
+  const [availableTags, setAvailableTags] = useState<string[]>([]);
   const [selectedTag, setSelectedTag] = useState<MistakeTag | null>(null);
   const [noteText, setNoteText] = useState('');
   const [showHistory, setShowHistory] = useState(false);
+  const [isManageMode, setIsManageMode] = useState(false);
+  const [newTagInput, setNewTagInput] = useState('');
 
   useEffect(() => {
     if (open) {
       setEntries(getSignatureEntries(signature));
+      setAvailableTags(loadCustomTags());
       setSelectedTag(null);
       setNoteText('');
       setShowHistory(false);
+      setIsManageMode(false);
     }
   }, [open, signature]);
 
@@ -51,15 +60,47 @@ const SignatureDialog = ({ open, onClose, signature, dateLabel, dateStr }: Signa
     setEntries(getSignatureEntries(signature));
   };
 
+  const handleAddTag = () => {
+    if (addCustomTag(newTagInput)) {
+      setAvailableTags(loadCustomTags());
+      setNewTagInput('');
+    }
+  };
+
+  const handleDeleteTag = (tag: string) => {
+    // Check for usage before deleting
+    const allSignatures = loadSignatureStore();
+    let usageCount = 0;
+
+    Object.values(allSignatures).forEach(sigData => {
+      sigData.entries.forEach(entry => {
+        if (entry.tag === tag) {
+          usageCount++;
+        }
+      });
+    });
+
+    if (usageCount > 0) {
+      const confirmed = window.confirm(
+        `The tag "${tag}" is currently used in ${usageCount} entries. Are you sure you want to delete it? This will leave existing entries with an unknown tag.`
+      );
+      if (!confirmed) return;
+    }
+
+    deleteCustomTag(tag);
+    setAvailableTags(loadCustomTags());
+    if (selectedTag === tag) setSelectedTag(null);
+  };
+
   return (
     <Dialog open={open} onOpenChange={v => !v && onClose()}>
       <DialogContent className="max-w-md">
         <DialogHeader>
           <DialogTitle className="font-serif flex items-center gap-2">
-            <span className="text-2xl">{signature}</span>
-            <span className="text-sm font-normal text-muted-foreground">Day Signature</span>
+            <span className="text-3xl">{signature}</span>
+            <span className="text-base font-normal text-muted-foreground">Day Signature</span>
           </DialogTitle>
-          <p className="text-xs text-muted-foreground">{dateLabel}</p>
+          <p className="text-sm text-muted-foreground">{dateLabel}</p>
         </DialogHeader>
 
         {/* Warning Panel */}
@@ -70,22 +111,22 @@ const SignatureDialog = ({ open, onClose, signature, dateLabel, dateStr }: Signa
               <span>⚠ Pattern Warning — {signature}</span>
             </div>
 
-            <div className="grid grid-cols-2 gap-2 text-xs">
+            <div className="grid grid-cols-2 gap-2 text-sm">
               <div className="bg-background/60 rounded p-2">
                 <div className="text-muted-foreground">Past logs</div>
-                <div className="text-lg font-bold text-foreground">{analysis.totalLogs}</div>
+                <div className="text-xl font-bold text-foreground">{analysis.totalLogs}</div>
               </div>
               <div className="bg-background/60 rounded p-2">
                 <div className="text-muted-foreground">Top pattern</div>
-                <div className="text-sm font-semibold text-foreground">{analysis.topTag}</div>
+                <div className="text-base font-semibold text-foreground">{analysis.topTag}</div>
               </div>
             </div>
 
             {/* Last 3 entries */}
             <div className="space-y-1">
-              <div className="text-xs font-medium text-muted-foreground">Recent entries on this signature:</div>
+              <div className="text-sm font-medium text-muted-foreground">Recent entries on this signature:</div>
               {analysis.lastThree.map(e => (
-                <div key={e.id} className="text-xs bg-background/60 rounded px-2 py-1.5 flex justify-between items-start">
+                <div key={e.id} className="text-sm bg-background/60 rounded px-2 py-1.5 flex justify-between items-start">
                   <div>
                     <span className="font-medium">{e.tag}</span>
                     {e.text && <span className="text-muted-foreground"> — {e.text}</span>}
@@ -127,24 +168,58 @@ const SignatureDialog = ({ open, onClose, signature, dateLabel, dateStr }: Signa
 
         {/* Log new entry */}
         <div className="border-t border-border pt-3 space-y-3">
-          <div className="text-xs font-medium text-muted-foreground">Log behavior pattern:</div>
+          <div className="flex items-center justify-between">
+            <div className="text-sm font-medium text-muted-foreground">Log behavior pattern:</div>
+            <button
+              onClick={() => setIsManageMode(!isManageMode)}
+              className={`p-1 rounded-md transition-colors ${isManageMode ? 'bg-primary/10 text-primary' : 'text-muted-foreground hover:bg-muted'}`}
+              title="Manage Pattern Tags"
+            >
+              <Settings className="w-4 h-4" />
+            </button>
+          </div>
+
+          {isManageMode && (
+            <div className="flex gap-2">
+              <Input
+                placeholder="New pattern tag..."
+                value={newTagInput}
+                onChange={e => setNewTagInput(e.target.value)}
+                className="h-9 text-sm"
+                onKeyDown={(e) => e.key === 'Enter' && handleAddTag()}
+              />
+              <Button size="sm" onClick={handleAddTag} className="h-9">
+                <Plus className="w-4 h-4" />
+              </Button>
+            </div>
+          )}
+
           <div className="flex flex-wrap gap-1.5">
-            {MISTAKE_TAGS.map(tag => (
-              <button
-                key={tag}
-                onClick={() => setSelectedTag(selectedTag === tag ? null : tag)}
-                className={`text-xs px-2.5 py-1.5 rounded-full border transition-colors
-                  ${selectedTag === tag
-                    ? 'bg-primary text-primary-foreground border-primary'
-                    : 'bg-muted border-border hover:border-primary/50 text-foreground'
-                  }`}
-              >
-                {tag}
-              </button>
+            {availableTags.map(tag => (
+              <div key={tag} className="relative group">
+                <button
+                  onClick={() => !isManageMode && setSelectedTag(selectedTag === tag ? null : tag)}
+                  className={`text-sm px-2.5 py-1.5 rounded-full border transition-colors
+                    ${selectedTag === tag
+                      ? 'bg-primary text-primary-foreground border-primary'
+                      : 'bg-muted border-border hover:border-primary/50 text-foreground'
+                    } ${isManageMode ? 'cursor-default pr-7' : ''}`}
+                >
+                  {tag}
+                </button>
+                {isManageMode && (
+                  <button
+                    onClick={() => handleDeleteTag(tag)}
+                    className="absolute right-1.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-destructive p-0.5"
+                  >
+                    <X className="w-3 h-3" />
+                  </button>
+                )}
+              </div>
             ))}
           </div>
 
-          {selectedTag && (
+          {!isManageMode && selectedTag && (
             <>
               <Textarea
                 placeholder="Optional note..."

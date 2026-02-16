@@ -4,6 +4,8 @@ import { getLunarDate, getSolarTerm, HEAVENLY_STEMS, EARTHLY_BRANCHES, SOLAR_TER
 import HorseMascot from './HorseMascot';
 import { getDaySignature, signatureHasEntries, loadSignatureStore } from '@/lib/signature-store';
 import SignatureDialog from './SignatureDialog';
+import { loadProfile, getProfileBranches } from '@/lib/bazi-profile';
+import { calculateRiskLevel } from '@/lib/bazi-calculator';
 
 interface DailyViewProps {
   selectedDate: Date;
@@ -38,6 +40,10 @@ const DailyView = ({ selectedDate, onDateChange }: DailyViewProps) => {
   const [noteLabel, setNoteLabel] = useState('');
   const [noteSignature, setNoteSignature] = useState('');
   const [storeVersion, setStoreVersion] = useState(0);
+
+  // Load user's BaZi profile for risk calculation
+  const profile = loadProfile();
+  const userBranches = getProfileBranches(profile);
 
   const year = selectedDate.getFullYear();
   const month = selectedDate.getMonth();
@@ -89,7 +95,7 @@ const DailyView = ({ selectedDate, onDateChange }: DailyViewProps) => {
         <button onClick={prevMonth} className="p-1 hover:bg-muted rounded-lg">
           <ChevronLeft className="w-5 h-5" />
         </button>
-        <h2 className="font-serif text-lg font-semibold">
+        <h2 className="font-serif text-xl font-semibold">
           {selectedDate.toLocaleDateString('en-US', { month: 'long' })}, {year}
         </h2>
         <button onClick={nextMonth} className="p-1 hover:bg-muted rounded-lg">
@@ -119,6 +125,12 @@ const DailyView = ({ selectedDate, onDateChange }: DailyViewProps) => {
           const lunarLabel = lunar.day === 1 ? `lm ${lunar.month}` : lunar.dayName;
           const solarAbbr = solarTerm ? SOLAR_TERM_ABBR[solarTerm.name] || solarTerm.name : null;
 
+          // Calculate BaZi risk level (only if profile exists)
+          const dailyBranch = stemBranch[1];
+          const riskInfo = userBranches.length > 0
+            ? calculateRiskLevel(dailyBranch, userBranches)
+            : null;
+
           return (
             <button
               key={i}
@@ -130,21 +142,33 @@ const DailyView = ({ selectedDate, onDateChange }: DailyViewProps) => {
             >
               {/* Top row: day number + stem-branch */}
               <div className="flex justify-between items-start w-full">
-                <span className={`text-base font-bold leading-tight ${cell.isOutside ? 'text-muted-foreground' : ''}`}>
+                <span className={`text-lg font-bold leading-tight ${cell.isOutside ? 'text-muted-foreground' : ''}`}>
                   {cell.day}
                 </span>
-                <div className="flex flex-col items-center font-serif text-[10px] text-muted-foreground leading-none">
+                <div className="flex flex-col items-center font-serif text-sm text-muted-foreground leading-none">
                   <span>{stemBranch[0]}</span>
-                  <span>{stemBranch[1]}</span>
+                  <span className="relative">
+                    {/* Risk level colored background - behind branch character only */}
+                    {!cell.isOutside && riskInfo && (
+                      <div
+                        className={`absolute inset-0 rounded-sm opacity-30 ${riskInfo.level === 'high' ? 'bg-red-500' :
+                          riskInfo.level === 'low' ? 'bg-green-500' :
+                            'bg-yellow-500'
+                          }`}
+                        title={riskInfo.reason}
+                      />
+                    )}
+                    <span className="relative z-10">{stemBranch[1]}</span>
+                  </span>
                 </div>
               </div>
 
               {/* Bottom: lunar day or solar term */}
               <div className="mt-auto">
                 {solarAbbr ? (
-                  <span className="text-[10px] font-bold text-accent leading-tight">{solarAbbr}</span>
+                  <span className="text-xs font-bold text-accent leading-tight">{solarAbbr}</span>
                 ) : (
-                  <span className="text-[10px] text-primary leading-tight">{lunarLabel}</span>
+                  <span className="text-xs text-primary leading-tight">{lunarLabel}</span>
                 )}
               </div>
 
@@ -165,6 +189,22 @@ const DailyView = ({ selectedDate, onDateChange }: DailyViewProps) => {
         </div>
       )}
 
+      {/* Risk Level Legend */}
+      <div className="mt-3 px-1 text-sm space-y-0.5 border-t border-border/40 pt-2">
+        <div className="font-semibold text-primary">Daily Risk Levels (Work Focus):</div>
+        {userBranches.length > 0 ? (
+          <>
+            <div className="text-muted-foreground">🔴 High: Clash/Punishment with your chart</div>
+            <div className="text-muted-foreground">🟡 Medium: Harm or neutral</div>
+            <div className="text-muted-foreground">🟢 Low: Harmony/Support</div>
+          </>
+        ) : (
+          <div className="text-muted-foreground italic bg-muted/30 p-2 rounded mt-1">
+            Setting up your BaZi profile in the menu (⋮) to enable personalized risk analysis.
+          </div>
+        )}
+      </div>
+
       {/* Y/M/D Stem-Branch Summary */}
       {(() => {
         const yearSB = getYearStemBranch(year);
@@ -179,15 +219,15 @@ const DailyView = ({ selectedDate, onDateChange }: DailyViewProps) => {
             <div className="flex flex-col items-end gap-1">
               <div className="flex items-baseline gap-2.5 text-primary/80">
                 <span className="font-serif text-2xl tracking-wide">{yearSB.full}</span>
-                <span className="text-xs font-medium text-muted-foreground">Y</span>
+                <span className="text-sm font-medium text-muted-foreground">Y</span>
               </div>
-              <div className="flex items-baseline gap-2.5 text-primary/80">
+              <div className="flex items-baseline gap-2 text-primary/80">
                 <span className="font-serif text-2xl tracking-wide">{monthSB.full}</span>
-                <span className="text-xs font-medium text-muted-foreground">M</span>
+                <span className="text-sm font-medium text-muted-foreground">M</span>
               </div>
-              <div className="flex items-baseline gap-2.5 text-primary/80">
+              <div className="flex items-baseline gap-2 text-primary/80">
                 <span className="font-serif text-2xl tracking-wide">{dayStem}{dayBranch}</span>
-                <span className="text-xs font-medium text-muted-foreground">D</span>
+                <span className="text-sm font-medium text-muted-foreground">D</span>
               </div>
             </div>
             <div className="w-16 h-16">

@@ -60,13 +60,13 @@ const MonthlyView = ({ selectedDate, onDateChange, onViewChange }: MonthlyViewPr
               className={`zodiac-card text-left ${isCurrent ? 'ring-2 ring-primary' : ''}`}
             >
               <div className="flex items-start justify-between mb-1">
-                <span className="font-serif font-bold text-sm">{name}</span>
-                <div className="flex flex-col items-center font-serif text-xs text-primary/70 leading-none">
+                <span className="font-serif font-bold text-base">{name}</span>
+                <div className="flex flex-col items-center font-serif text-sm text-primary/70 leading-none">
                   <span>{mSB.full[0]}</span>
                   <span>{mSB.full[1]}</span>
                 </div>
               </div>
-              <div className="text-[10px] text-muted-foreground mt-1">{getLunarRange(i)}</div>
+              <div className="text-xs text-muted-foreground mt-1">{getLunarRange(i)}</div>
             </button>
           );
         })}
@@ -81,11 +81,11 @@ const MonthlyView = ({ selectedDate, onDateChange, onViewChange }: MonthlyViewPr
             <div className="flex flex-col items-end gap-1">
               <div className="flex items-baseline gap-2.5 text-primary/80">
                 <span className="font-serif text-2xl tracking-wide">{yearSB.full}</span>
-                <span className="text-xs font-medium text-muted-foreground">Y</span>
+                <span className="text-sm font-medium text-muted-foreground">Y</span>
               </div>
               <div className="flex items-baseline gap-2.5 text-primary/80">
                 <span className="font-serif text-2xl tracking-wide">{monthSB.full}</span>
-                <span className="text-xs font-medium text-muted-foreground">M</span>
+                <span className="text-sm font-medium text-muted-foreground">M</span>
               </div>
             </div>
             <div className="w-16 h-16">
