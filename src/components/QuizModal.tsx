@@ -8,6 +8,8 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { useNavigate } from 'react-router-dom';
 import HorseMascot from '@/components/HorseMascot';
 import { ArrowLeft, ArrowRight, Loader2, Shield, TrendingUp, Eye } from 'lucide-react';
+import { submitQuizToGoogleSheets } from '@/lib/quiz-submission';
+import { useToast } from '@/hooks/use-toast';
 
 interface QuizModalProps {
     open: boolean;
@@ -18,8 +20,10 @@ const TOTAL_STEPS = 7;
 
 export default function QuizModal({ open, onOpenChange }: QuizModalProps) {
     const navigate = useNavigate();
+    const { toast } = useToast();
     const [step, setStep] = useState(1);
     const [loading, setLoading] = useState(false);
+    const [errors, setErrors] = useState<Record<string, string>>({});
     const [formData, setFormData] = useState({
         url: '',
         experience: '',
@@ -36,9 +40,75 @@ export default function QuizModal({ open, onOpenChange }: QuizModalProps) {
 
     const updateData = (key: string, value: any) => {
         setFormData(prev => ({ ...prev, [key]: value }));
+        // Clear error when user starts typing
+        if (errors[key]) {
+            setErrors(prev => ({ ...prev, [key]: '' }));
+        }
+    };
+
+    const validateStep = () => {
+        const newErrors: Record<string, string> = {};
+
+        switch (step) {
+            case 1:
+                if (!formData.email) {
+                    newErrors.email = 'Email is required';
+                } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+                    newErrors.email = 'Please enter a valid email address (e.g. "example@domain.com")';
+                }
+                break;
+            case 2:
+                if (!formData.experience) {
+                    newErrors.experience = 'Please select your knowledge level';
+                }
+                break;
+            case 3:
+                if (!formData.goal) {
+                    newErrors.goal = 'Please select what you want to achieve';
+                }
+                break;
+            case 4:
+                if (!formData.frequency) {
+                    newErrors.frequency = 'Please select how often you check your chart';
+                }
+                break;
+            case 5:
+                if (!formData.commitment) {
+                    newErrors.commitment = 'Please select your commitment level';
+                }
+                break;
+            case 6:
+                if (!formData.learningStyle) {
+                    newErrors.learningStyle = 'Please select your learning preference';
+                }
+                break;
+            case 7:
+                if (!formData.firstName) {
+                    newErrors.firstName = 'First name is required';
+                }
+                if (!formData.lastName) {
+                    newErrors.lastName = 'Last name is required';
+                }
+                if (!formData.email) {
+                    newErrors.email = 'Email is required';
+                } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+                    newErrors.email = 'Please enter a valid email address';
+                }
+                if (!formData.agreeToTerms) {
+                    newErrors.agreeToTerms = 'You must agree to receive the results';
+                }
+                break;
+        }
+
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
     };
 
     const handleNext = () => {
+        if (!validateStep()) {
+            return;
+        }
+
         if (step < TOTAL_STEPS) {
             setStep(step + 1);
         } else {
@@ -52,51 +122,96 @@ export default function QuizModal({ open, onOpenChange }: QuizModalProps) {
 
     const handleSubmit = async () => {
         setLoading(true);
-        // Simulate API call
-        await new Promise(resolve => setTimeout(resolve, 1500));
-        setLoading(false);
-        onOpenChange(false);
-        navigate('/app');
+        
+        try {
+            // Submit to Google Sheets
+            const success = await submitQuizToGoogleSheets({
+                email: formData.email,
+                experience: formData.experience,
+                goal: formData.goal,
+                frequency: formData.frequency,
+                commitment: formData.commitment,
+                learningStyle: formData.learningStyle,
+                firstName: formData.firstName,
+                lastName: formData.lastName,
+                phone: formData.phone,
+                agreeToTerms: formData.agreeToTerms,
+            });
+
+            if (success) {
+                toast({
+                    title: "Success!",
+                    description: "Your responses have been saved. Redirecting to the app...",
+                });
+                
+                // Wait a bit before navigating
+                await new Promise(resolve => setTimeout(resolve, 1500));
+                onOpenChange(false);
+                navigate('/app');
+            } else {
+                toast({
+                    title: "Submission failed",
+                    description: "There was an error saving your responses. Please try again.",
+                    variant: "destructive",
+                });
+            }
+        } catch (error) {
+            console.error('Submission error:', error);
+            toast({
+                title: "Error",
+                description: "Something went wrong. Please try again.",
+                variant: "destructive",
+            });
+        } finally {
+            setLoading(false);
+        }
     };
 
     const renderStep = () => {
         switch (step) {
             case 1:
                 return (
-                    <div className="space-y-8 py-4">
-                        <div className="text-center space-y-4">
-                            <h3 className="font-sans text-4xl sm:text-5xl font-bold text-[#2C2C2C] tracking-tight">
+                    <div className="space-y-6 py-4">
+                        <div className="text-center space-y-3">
+                            <h3 className="text-3xl sm:text-4xl font-bold text-[#2C2C2C] tracking-tight" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
                                 Want Better Decision Making?
                             </h3>
-                            <p className="text-muted-foreground text-lg max-w-2xl mx-auto leading-relaxed">
+                            <p className="text-muted-foreground text-base max-w-xl mx-auto leading-relaxed" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
                                 Answer 5 quick questions and I will give you a step-by-step <span className="font-bold text-foreground">60-day action plan</span> showing you exactly what you need to do to master your patterns.
                             </p>
                         </div>
 
-                        <div className="max-w-xl mx-auto w-full">
-                            <div className="flex gap-3 h-14">
+                        <div className="max-w-lg mx-auto w-full space-y-2">
+                            <div className="flex gap-2 h-12">
                                 <Input
                                     placeholder="Enter your email address"
                                     value={formData.email}
                                     onChange={(e) => updateData('email', e.target.value)}
-                                    className="h-full text-lg bg-background border-2 focus-visible:ring-0 focus-visible:border-primary px-4"
+                                    className={`h-full text-base bg-background border-2 focus-visible:ring-0 focus-visible:border-primary px-4 ${errors.email ? 'border-red-500' : ''}`}
+                                    style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}
                                 />
                                 <Button
                                     onClick={handleNext}
-                                    className="h-full px-8 text-lg font-bold uppercase tracking-wide bg-[#F95738] hover:bg-[#F95738]/90 text-white shadow-none rounded-md shrink-0"
+                                    className="h-full px-6 text-base font-bold uppercase tracking-wide bg-[#F95738] hover:bg-[#F95738]/90 text-white shadow-none rounded-md shrink-0"
+                                    style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}
                                 >
                                     Next
                                 </Button>
                             </div>
+                            {errors.email && (
+                                <p className="text-red-600 text-sm" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
+                                    {errors.email}
+                                </p>
+                            )}
                         </div>
 
-                        <div className="flex items-center justify-center gap-6 max-w-2xl mx-auto pt-4">
-                            <div className="w-16 h-16 shrink-0 rounded-full overflow-hidden shadow-sm flex items-center justify-center bg-gray-100">
+                        <div className="flex items-center justify-center gap-4 max-w-xl mx-auto pt-2">
+                            <div className="w-12 h-12 shrink-0 rounded-full overflow-hidden shadow-sm flex items-center justify-center bg-gray-100">
                                 <HorseMascot />
                             </div>
-                            <div className="bg-[#F5F5F5] p-5 rounded-lg relative text-muted-foreground leading-relaxed text-sm sm:text-base">
+                            <div className="bg-[#F5F5F5] p-3 rounded-lg relative text-muted-foreground leading-relaxed text-xs sm:text-sm shadow-sm border border-gray-100/50" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
                                 We analyze your patterns to identify risks, opportunities, and repetitive cycles.
-                                <div className="absolute top-1/2 -left-2 -mt-2 w-4 h-4 bg-[#F5F5F5] transform rotate-45" />
+                                <div className="absolute top-1/2 -left-1.5 -mt-1.5 w-3 h-3 bg-[#F5F5F5] transform rotate-45 border-l border-b border-gray-100/50" />
                             </div>
                         </div>
                     </div>
@@ -105,7 +220,14 @@ export default function QuizModal({ open, onOpenChange }: QuizModalProps) {
             case 2:
                 return (
                     <div className="space-y-6">
-                        <h3 className="font-serif text-xl font-medium text-center">What is your BaZi knowledge level?</h3>
+                        <h3 className="text-xl font-medium text-center" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>What is your BaZi knowledge level?</h3>
+                        {errors.experience && (
+                            <div className="border-2 border-blue-400 bg-blue-50 p-3 rounded-md">
+                                <p className="text-red-600 text-sm text-center" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
+                                    {errors.experience}
+                                </p>
+                            </div>
+                        )}
                         <RadioGroup value={formData.experience} onValueChange={(v) => updateData('experience', v)} className="space-y-3">
                             {['Beginner', 'Intermediate', 'Advanced'].map((opt) => (
                                 <div key={opt} className={`flex items-center space-x-3 border p-4 rounded-xl cursor-pointer transition-all duration-200 ${formData.experience === opt ? 'border-primary bg-primary/5 shadow-sm' : 'hover:bg-muted/50 bg-background'}`}>
@@ -126,7 +248,7 @@ export default function QuizModal({ open, onOpenChange }: QuizModalProps) {
             case 3:
                 return (
                     <div className="space-y-6">
-                        <h3 className="font-serif text-xl font-medium text-center">What do you want to achieve?</h3>
+                        <h3 className="text-xl font-medium text-center" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>What do you want to achieve?</h3>
                         <RadioGroup value={formData.goal} onValueChange={(v) => updateData('goal', v)} className="space-y-3">
                             {[
                                 { val: 'Avoid bad decisions', icon: Shield },
@@ -154,7 +276,7 @@ export default function QuizModal({ open, onOpenChange }: QuizModalProps) {
             case 4:
                 return (
                     <div className="space-y-6">
-                        <h3 className="font-serif text-xl font-medium text-center">How often do you check your chart?</h3>
+                        <h3 className="text-xl font-medium text-center" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>How often do you check your chart?</h3>
                         <RadioGroup value={formData.frequency} onValueChange={(v) => updateData('frequency', v)} className="space-y-3">
                             {['Daily', 'Weekly', 'Monthly', 'Rarely'].map((opt) => (
                                 <div key={opt} className={`flex items-center space-x-3 border p-4 rounded-xl cursor-pointer transition-all duration-200 ${formData.frequency === opt ? 'border-primary bg-primary/5 shadow-sm' : 'hover:bg-muted/50 bg-background'}`}>
@@ -175,7 +297,7 @@ export default function QuizModal({ open, onOpenChange }: QuizModalProps) {
             case 5:
                 return (
                     <div className="space-y-6">
-                        <h3 className="font-serif text-xl font-medium text-center">How committed are you to tracking?</h3>
+                        <h3 className="text-xl font-medium text-center" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>How committed are you to tracking?</h3>
                         <RadioGroup value={formData.commitment} onValueChange={(v) => updateData('commitment', v)} className="space-y-3">
                             {['I want to track everything', 'Just big events', 'I need reminders', 'I\'m not sure yet'].map((opt) => (
                                 <div key={opt} className={`flex items-center space-x-3 border p-4 rounded-xl cursor-pointer transition-all duration-200 ${formData.commitment === opt ? 'border-primary bg-primary/5 shadow-sm' : 'hover:bg-muted/50 bg-background'}`}>
@@ -197,8 +319,8 @@ export default function QuizModal({ open, onOpenChange }: QuizModalProps) {
                 return (
                     <div className="space-y-6">
                         <div className="text-center space-y-2 mb-6">
-                            <h3 className="font-serif text-xl font-medium">Congrats! You're one step away from your 60-day action plan.</h3>
-                            <p className="text-muted-foreground">How would you prefer to learn?</p>
+                            <h3 className="text-xl font-medium" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>Congrats! You're one step away from your 60-day action plan.</h3>
+                            <p className="text-muted-foreground" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>How would you prefer to learn?</p>
                         </div>
 
                         <RadioGroup value={formData.learningStyle} onValueChange={(v) => updateData('learningStyle', v)} className="space-y-3">
@@ -216,34 +338,55 @@ export default function QuizModal({ open, onOpenChange }: QuizModalProps) {
                 return (
                     <div className="space-y-6 text-center">
                         <div className="space-y-2">
-                            <h3 className="font-serif text-2xl font-bold">Your results are ready!</h3>
-                            <p className="text-muted-foreground">
+                            <h3 className="text-2xl font-bold" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>Your results are ready!</h3>
+                            <p className="text-muted-foreground" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
                                 To get your results and a step-by-step guide on mastering your patterns, just enter in your name and email.
                             </p>
                         </div>
 
                         <div className="space-y-4 text-left bg-muted/30 p-6 rounded-xl border border-border/50">
                             <div className="grid grid-cols-2 gap-4">
-                                <Input
-                                    placeholder="First Name"
-                                    value={formData.firstName}
-                                    onChange={(e) => updateData('firstName', e.target.value)}
-                                    className="h-11"
-                                />
-                                <Input
-                                    placeholder="Last Name"
-                                    value={formData.lastName}
-                                    onChange={(e) => updateData('lastName', e.target.value)}
-                                    className="h-11"
-                                />
+                                <div>
+                                    <Input
+                                        placeholder="First Name"
+                                        value={formData.firstName}
+                                        onChange={(e) => updateData('firstName', e.target.value)}
+                                        className={`h-11 ${errors.firstName ? 'border-red-500' : ''}`}
+                                    />
+                                    {errors.firstName && (
+                                        <p className="text-red-600 text-xs mt-1" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
+                                            {errors.firstName}
+                                        </p>
+                                    )}
+                                </div>
+                                <div>
+                                    <Input
+                                        placeholder="Last Name"
+                                        value={formData.lastName}
+                                        onChange={(e) => updateData('lastName', e.target.value)}
+                                        className={`h-11 ${errors.lastName ? 'border-red-500' : ''}`}
+                                    />
+                                    {errors.lastName && (
+                                        <p className="text-red-600 text-xs mt-1" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
+                                            {errors.lastName}
+                                        </p>
+                                    )}
+                                </div>
                             </div>
-                            <Input
-                                placeholder="Your Email"
-                                type="email"
-                                value={formData.email}
-                                onChange={(e) => updateData('email', e.target.value)}
-                                className="h-11"
-                            />
+                            <div>
+                                <Input
+                                    placeholder="Your Email"
+                                    type="email"
+                                    value={formData.email}
+                                    onChange={(e) => updateData('email', e.target.value)}
+                                    className={`h-11 ${errors.email ? 'border-red-500' : ''}`}
+                                />
+                                {errors.email && (
+                                    <p className="text-red-600 text-xs mt-1" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
+                                        {errors.email}
+                                    </p>
+                                )}
+                            </div>
                             <Input
                                 placeholder="Phone Number (Optional)"
                                 type="tel"
@@ -263,7 +406,20 @@ export default function QuizModal({ open, onOpenChange }: QuizModalProps) {
                                     I agree to receive my quiz results and a series of emails that will teach me how to interpret my patterns.
                                 </Label>
                             </div>
+                            {errors.agreeToTerms && (
+                                <p className="text-red-600 text-xs" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
+                                    {errors.agreeToTerms}
+                                </p>
+                            )}
                         </div>
+                        
+                        {Object.keys(errors).length > 0 && (
+                            <div className="border-2 border-blue-400 bg-blue-50 p-3 rounded-md">
+                                <p className="text-red-600 text-sm text-center" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
+                                    One or more fields have an error. Please check and try again.
+                                </p>
+                            </div>
+                        )}
 
                         <p className="text-[10px] text-muted-foreground/60 max-w-sm mx-auto">
                             By clicking the button below, you consent for us to contact you at the number and email address provided. Privacy Policy.
@@ -278,7 +434,7 @@ export default function QuizModal({ open, onOpenChange }: QuizModalProps) {
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="max-w-none w-screen h-screen flex flex-col p-0 gap-0 overflow-hidden border-none shadow-none rounded-none bg-white">
+            <DialogContent className="max-w-none w-screen h-screen sm:max-w-none sm:w-screen sm:h-screen sm:rounded-none sm:border-none flex flex-col p-0 gap-0 overflow-hidden border-none shadow-none rounded-none bg-white">
                 {/* Close Button is usually provided by DialogContent, ensure it's visible if needed, 
                     but here we might want to let the user close it naturally or add a custom one if the default is hidden/styled oddly. 
                     Default DialogContent usually has a Close button. We'll rely on that for now or check if we need to overriding styles.
