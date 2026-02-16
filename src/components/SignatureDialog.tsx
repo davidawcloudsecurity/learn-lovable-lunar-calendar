@@ -60,8 +60,15 @@ const SignatureDialog = ({ open, onClose, signature, dateLabel, dateStr }: Signa
     setEntries(getSignatureEntries(signature));
   };
 
+  // Clean tag: remove leading/trailing hyphens and ensure no double hyphens
   const handleAddTag = () => {
-    if (addCustomTag(newTagInput)) {
+    const cleanTag = newTagInput
+      .replace(/^-+|-+$/g, '')
+      .replace(/-{2,}/g, '-');
+
+    if (!cleanTag) return;
+
+    if (addCustomTag(cleanTag)) {
       setAvailableTags(loadCustomTags());
       setNewTagInput('');
     }
@@ -184,7 +191,7 @@ const SignatureDialog = ({ open, onClose, signature, dateLabel, dateStr }: Signa
               <Input
                 placeholder="New pattern tag..."
                 value={newTagInput}
-                onChange={e => setNewTagInput(e.target.value.toLowerCase().replace(/\s+/g, '-'))}                
+                onChange={e => setNewTagInput(e.target.value.toLowerCase().replace(/\s+/g, '-'))}
                 className="h-9 text-sm"
                 onKeyDown={(e) => e.key === 'Enter' && handleAddTag()}
               />
