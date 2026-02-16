@@ -184,7 +184,14 @@ const SignatureDialog = ({ open, onClose, signature, dateLabel, dateStr }: Signa
               <Input
                 placeholder="New pattern tag..."
                 value={newTagInput}
-                onChange={e => setNewTagInput(e.target.value.toLowerCase().replace(/\s+/g, '-'))}                
+                onChange={e => setNewTagInput(
+                  e.target.value
+                    .toLowerCase()
+                    .replace(/\s+/g, '-')           // spaces to hyphens
+                    .replace(/[^a-z0-9-]/g, '')     // remove special chars (optional)
+                    .replace(/-+/g, '-')            // multiple hyphens to single
+                    .replace(/^-|-$/g, '')          // remove leading/trailing hyphens
+                )}                
                 className="h-9 text-sm"
                 onKeyDown={(e) => e.key === 'Enter' && handleAddTag()}
               />
