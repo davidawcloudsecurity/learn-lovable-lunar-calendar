@@ -184,7 +184,7 @@ const SignatureDialog = ({ open, onClose, signature, dateLabel, dateStr }: Signa
               <Input
                 placeholder="New pattern tag..."
                 value={newTagInput}
-                onChange={e => setNewTagInput(e.target.value.toLowerCase().replace(/\s+/g, '-').replace(/^-+|-+$/g, ''))}                
+                onChange={e => setNewTagInput(e.target.value.toLowerCase().replace(/\s+/g, '-').replace(/-{2,}/g, '-').replace(/^-+|-+$/g, ''))}                
                 className="h-9 text-sm"
                 onKeyDown={(e) => e.key === 'Enter' && handleAddTag()}
               />
