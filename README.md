@@ -27,6 +27,42 @@ Chou and Wu (丑午相害): The Ox-Horse Six Harm combination causes self-worth 
 Zi and Wei (子未相害): The Rat-Goat Six Harm combination leads to clouded judgment, exaggeration of problems, and aversion to risks. This pairing tends to assume worst-case scenarios, inhibiting growth and independence.
 Yin and Si (寅巳相害): Associated with distrust of others and scepticism towards positive experiences, this harm may result in misjudged interactions. Dominance of this combination in a chart can indicate heightened accident risks, requiring careful mitigation.
 ```
+### Destruction
+```
+Destruction in the day (破 Po). Destruction in Bazi is behavior, attitude or actions that are obviously destructive to the person himself
+
+1. What Destruction is
+Destruction (破) is a side‑by‑side clash between certain Earthly Branches in your BaZi chart or in the 10‑year, year, month, or day pillars.
+
+It indicates forced, damaging actions you take that hurt yourself or your situation, often under pressure or feeling “backed into a corner.”
+
+2. Where it appears
+In the natal chart: Lifelong tendency toward self‑destructive habits, poor choices, or repeated setbacks that stem from your own behavior.
+
+In Fortune / Year / Month / Day pillar: A temporary period of conflict, breakdown, or loss; you may feel pushed into actions you later regret.
+
+3. Types of problems it causes
+Self‑destructive behavior: Addictions (alcohol, drugs), reckless spending, or harmful routines that damage health, wealth, or relationships.
+
+Relationship and social issues: Conflicts, breakups, or “forced” decisions in love, family, or work; misunderstandings and division when Destruction hits the Marriage / Day pillar.
+
+Mental and emotional strain: Constant dissatisfaction, inner turmoil, or feeling like your dreams are “shattered” or blocked.
+​
+
+4. When it can be useful
+Destruction can act as “creative destruction”: breaking old, stuck patterns so something new can emerge.
+
+If the destroyed element is unfavorable, it may remove a burden; the key is to adapt, learn, and redirect rather than resist the change.
+
+5. Practical action steps
+Avoid big moves on Destruction days: Don’t start projects, sign contracts, or make major life decisions on Destruction days; use them for reflection and small, safe actions.
+
+Watch your habits: Identify and replace self‑sabotaging patterns (impulsive decisions, over‑indulgence) with structure and discipline.
+
+Protect key areas: If Destruction hits Marriage / Day pillar, avoid forcing relationship changes; focus on communication and patience instead.
+
+
+```
 ### The Fire Ungrateful Punishment Day
 ```
 The Ungrateful Punishment or Fire Punishment (無恩之刑 Wu En Zhixing) occurs when three animals come together: Monkey 申, Snake 巳 and Tiger 寅. Despite the fact that in the Bazi the Monkey 申 and the Snake 巳 merge, in alliance with the Tiger 寅, such a combination is no longer considered. Priority is given to Punishments because it is a more serious thing. Moreover, it can be noted that within the Ungrateful Punishment there is also a Clash of the Monkey 申 and the Tiger 寅.
