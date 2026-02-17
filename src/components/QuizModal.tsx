@@ -16,7 +16,7 @@ interface QuizModalProps {
     onOpenChange: (open: boolean) => void;
 }
 
-const TOTAL_STEPS = 7;
+const TOTAL_STEPS = 6;
 
 export default function QuizModal({ open, onOpenChange }: QuizModalProps) {
     const navigate = useNavigate();
@@ -26,11 +26,10 @@ export default function QuizModal({ open, onOpenChange }: QuizModalProps) {
     const [errors, setErrors] = useState<Record<string, string>>({});
     const [formData, setFormData] = useState({
         url: '',
-        experience: '',
-        goal: '',
-        frequency: '',
+        frustration: '',
+        patterns: '',
+        tracking: '',
         commitment: '',
-        learningStyle: '',
         firstName: '',
         lastName: '',
         email: '',
@@ -58,31 +57,26 @@ export default function QuizModal({ open, onOpenChange }: QuizModalProps) {
                 }
                 break;
             case 2:
-                if (!formData.experience) {
-                    newErrors.experience = 'Please select your knowledge level';
+                if (!formData.frustration) {
+                    newErrors.frustration = 'Please select what frustrates you most';
                 }
                 break;
             case 3:
-                if (!formData.goal) {
-                    newErrors.goal = 'Please select what you want to achieve';
+                if (!formData.patterns) {
+                    newErrors.patterns = 'Please select an option';
                 }
                 break;
             case 4:
-                if (!formData.frequency) {
-                    newErrors.frequency = 'Please select how often you check your chart';
+                if (!formData.tracking) {
+                    newErrors.tracking = 'Please select your tracking preference';
                 }
                 break;
             case 5:
                 if (!formData.commitment) {
-                    newErrors.commitment = 'Please select your commitment level';
+                    newErrors.commitment = 'Please select how long you can commit';
                 }
                 break;
             case 6:
-                if (!formData.learningStyle) {
-                    newErrors.learningStyle = 'Please select your learning preference';
-                }
-                break;
-            case 7:
                 if (!formData.firstName) {
                     newErrors.firstName = 'First name is required';
                 }
@@ -95,7 +89,7 @@ export default function QuizModal({ open, onOpenChange }: QuizModalProps) {
                     newErrors.email = 'Please enter a valid email address';
                 }
                 if (!formData.agreeToTerms) {
-                    newErrors.agreeToTerms = 'You must agree to receive the results';
+                    newErrors.agreeToTerms = 'You must agree to receive your chart';
                 }
                 break;
         }
@@ -137,11 +131,10 @@ export default function QuizModal({ open, onOpenChange }: QuizModalProps) {
             // Submit to Google Sheets
             const success = await submitQuizToGoogleSheets({
                 email: formData.email,
-                experience: formData.experience,
-                goal: formData.goal,
-                frequency: formData.frequency,
+                frustration: formData.frustration,
+                patterns: formData.patterns,
+                tracking: formData.tracking,
                 commitment: formData.commitment,
-                learningStyle: formData.learningStyle,
                 firstName: formData.firstName,
                 lastName: formData.lastName,
                 phone: formData.phone,
@@ -151,7 +144,7 @@ export default function QuizModal({ open, onOpenChange }: QuizModalProps) {
             if (success) {
                 toast({
                     title: "Success!",
-                    description: "Your responses have been saved. Redirecting to the app...",
+                    description: "Your chart is ready. Redirecting to the app...",
                 });
                 
                 // Wait a bit before navigating
@@ -161,7 +154,7 @@ export default function QuizModal({ open, onOpenChange }: QuizModalProps) {
             } else {
                 toast({
                     title: "Submission failed",
-                    description: "There was an error saving your responses. Please try again.",
+                    description: "There was an error. Please try again.",
                     variant: "destructive",
                 });
             }
@@ -184,17 +177,18 @@ export default function QuizModal({ open, onOpenChange }: QuizModalProps) {
                     <div className="space-y-6 py-4">
                         <div className="text-center space-y-3">
                             <h3 className="text-3xl sm:text-4xl font-bold text-[#2C2C2C] tracking-tight" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
-                                Want Better Decision Making?
+                                Ever Wonder Why You Keep Making the Same Mistakes?
                             </h3>
                             <p className="text-muted-foreground text-base max-w-xl mx-auto leading-relaxed" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
-                                Answer 5 quick questions and I will give you a step-by-step <span className="font-bold text-foreground">60-day action plan</span> showing you exactly what you need to do to master your patterns.
+                                I built this app because I was tired of missing opportunities and repeating bad decisions. 
+                                Turns out my "bad days" follow a pattern. <span className="font-bold text-foreground">Maybe yours do too.</span>
                             </p>
                         </div>
 
                         <div className="max-w-lg mx-auto w-full space-y-2">
                             <div className="flex gap-2 h-12">
                                 <Input
-                                    placeholder="Enter your email address"
+                                    placeholder="Enter your email to see your pattern"
                                     value={formData.email}
                                     onChange={(e) => updateData('email', e.target.value)}
                                     className={`h-full text-base bg-background border-2 focus-visible:ring-0 focus-visible:border-primary px-4 ${errors.email ? 'border-red-500' : ''}`}
@@ -205,7 +199,7 @@ export default function QuizModal({ open, onOpenChange }: QuizModalProps) {
                                     className="h-full px-6 text-base font-bold uppercase tracking-wide bg-[#F95738] hover:bg-[#F95738]/90 text-white shadow-none rounded-md shrink-0"
                                     style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}
                                 >
-                                    Next
+                                    Show Me
                                 </Button>
                             </div>
                             {errors.email && (
@@ -220,7 +214,7 @@ export default function QuizModal({ open, onOpenChange }: QuizModalProps) {
                                 <HorseMascot />
                             </div>
                             <div className="bg-[#F5F5F5] p-3 rounded-lg relative text-muted-foreground leading-relaxed text-xs sm:text-sm shadow-sm border border-gray-100/50" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
-                                We analyze your patterns to identify risks, opportunities, and repetitive cycles.
+                                I'm tracking my decisions against my birth chart. Join me and let's see if there's a pattern.
                                 <div className="absolute top-1/2 -left-1.5 -mt-1.5 w-3 h-3 bg-[#F5F5F5] transform rotate-45 border-l border-b border-gray-100/50" />
                             </div>
                         </div>
@@ -230,42 +224,21 @@ export default function QuizModal({ open, onOpenChange }: QuizModalProps) {
             case 2:
                 return (
                     <div className="space-y-6">
-                        <h3 className="text-xl font-medium text-center" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>What is your BaZi knowledge level?</h3>
-                        {errors.experience && (
+                        <h3 className="text-xl font-medium text-center" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>What's your biggest frustration?</h3>
+                        {errors.frustration && (
                             <div className="border-2 border-blue-400 bg-blue-50 p-3 rounded-md">
                                 <p className="text-red-600 text-sm text-center" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
-                                    {errors.experience}
+                                    {errors.frustration}
                                 </p>
                             </div>
                         )}
-                        <RadioGroup value={formData.experience} onValueChange={(v) => handleAutoAdvance(v, 'experience')} className="space-y-3">
-                            {['Beginner', 'Intermediate', 'Advanced'].map((opt) => (
-                                <div key={opt} className={`flex items-center space-x-3 border p-4 rounded-xl cursor-pointer transition-all duration-200 ${formData.experience === opt ? 'border-primary bg-primary/5 shadow-sm' : 'hover:bg-muted/50 bg-background'}`}>
-                                    <RadioGroupItem value={opt} id={opt} />
-                                    <Label htmlFor={opt} className="flex-1 cursor-pointer font-medium text-base">{opt}</Label>
-                                </div>
-                            ))}
-                        </RadioGroup>
-                        <div className="flex items-center gap-3 bg-muted/20 p-3 rounded-lg mt-4">
-                            <div className="w-10 h-10 bg-white rounded-full border border-border flex items-center justify-center shrink-0 shadow-sm">
-                                <HorseMascot small />
-                            </div>
-                            <p className="text-xs text-muted-foreground">This helps us determine how much depth to include in your action plan.</p>
-                        </div>
-                    </div>
-                );
-
-            case 3:
-                return (
-                    <div className="space-y-6">
-                        <h3 className="text-xl font-medium text-center" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>What do you want to achieve?</h3>
-                        <RadioGroup value={formData.goal} onValueChange={(v) => handleAutoAdvance(v, 'goal')} className="space-y-3">
+                        <RadioGroup value={formData.frustration} onValueChange={(v) => handleAutoAdvance(v, 'frustration')} className="space-y-3">
                             {[
-                                { val: 'Avoid bad decisions', icon: Shield },
-                                { val: 'Understand my patterns', icon: Eye },
-                                { val: 'Plan better timing', icon: TrendingUp }
+                                { val: 'I repeat the same mistakes', icon: Shield },
+                                { val: 'I miss opportunities', icon: Eye },
+                                { val: 'Some days I\'m off and don\'t know why', icon: TrendingUp }
                             ].map((opt) => (
-                                <div key={opt.val} className={`flex items-center space-x-3 border p-4 rounded-xl cursor-pointer transition-all duration-200 ${formData.goal === opt.val ? 'border-primary bg-primary/5 shadow-sm' : 'hover:bg-muted/50 bg-background'}`}>
+                                <div key={opt.val} className={`flex items-center space-x-3 border p-4 rounded-xl cursor-pointer transition-all duration-200 ${formData.frustration === opt.val ? 'border-primary bg-primary/5 shadow-sm' : 'hover:bg-muted/50 bg-background'}`}>
                                     <RadioGroupItem value={opt.val} id={opt.val} />
                                     <Label htmlFor={opt.val} className="flex-1 cursor-pointer font-medium text-base flex items-center gap-2">
                                         <opt.icon className="w-4 h-4 text-muted-foreground" />
@@ -278,18 +251,18 @@ export default function QuizModal({ open, onOpenChange }: QuizModalProps) {
                             <div className="w-10 h-10 bg-white rounded-full border border-border flex items-center justify-center shrink-0 shadow-sm">
                                 <HorseMascot small />
                             </div>
-                            <p className="text-xs text-muted-foreground">We want to give you an action plan that you can easily implement.</p>
+                            <p className="text-xs text-muted-foreground">Me too. That's exactly why I built this.</p>
                         </div>
                     </div>
                 );
 
-            case 4:
+            case 3:
                 return (
                     <div className="space-y-6">
-                        <h3 className="text-xl font-medium text-center" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>How often do you check your chart?</h3>
-                        <RadioGroup value={formData.frequency} onValueChange={(v) => handleAutoAdvance(v, 'frequency')} className="space-y-3">
-                            {['Daily', 'Weekly', 'Monthly', 'Rarely'].map((opt) => (
-                                <div key={opt} className={`flex items-center space-x-3 border p-4 rounded-xl cursor-pointer transition-all duration-200 ${formData.frequency === opt ? 'border-primary bg-primary/5 shadow-sm' : 'hover:bg-muted/50 bg-background'}`}>
+                        <h3 className="text-xl font-medium text-center" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>Have you noticed patterns in your "good" vs "bad" days?</h3>
+                        <RadioGroup value={formData.patterns} onValueChange={(v) => handleAutoAdvance(v, 'patterns')} className="space-y-3">
+                            {['Yes, but I can\'t predict them', 'Sometimes, but I ignore them', 'No, feels random to me'].map((opt) => (
+                                <div key={opt} className={`flex items-center space-x-3 border p-4 rounded-xl cursor-pointer transition-all duration-200 ${formData.patterns === opt ? 'border-primary bg-primary/5 shadow-sm' : 'hover:bg-muted/50 bg-background'}`}>
                                     <RadioGroupItem value={opt} id={opt} />
                                     <Label htmlFor={opt} className="flex-1 cursor-pointer font-medium text-base">{opt}</Label>
                                 </div>
@@ -299,7 +272,28 @@ export default function QuizModal({ open, onOpenChange }: QuizModalProps) {
                             <div className="w-10 h-10 bg-white rounded-full border border-border flex items-center justify-center shrink-0 shadow-sm">
                                 <HorseMascot small />
                             </div>
-                            <p className="text-xs text-muted-foreground">We want to give you a plan that fits your routine.</p>
+                            <p className="text-xs text-muted-foreground">I used to think it was random too. Then I started tracking.</p>
+                        </div>
+                    </div>
+                );
+
+            case 4:
+                return (
+                    <div className="space-y-6">
+                        <h3 className="text-xl font-medium text-center" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>Would you track your decisions if it helped you see patterns?</h3>
+                        <RadioGroup value={formData.tracking} onValueChange={(v) => handleAutoAdvance(v, 'tracking')} className="space-y-3">
+                            {['Yes, I love tracking things', 'Maybe, if it\'s easy', 'Probably not, I\'m not a tracker'].map((opt) => (
+                                <div key={opt} className={`flex items-center space-x-3 border p-4 rounded-xl cursor-pointer transition-all duration-200 ${formData.tracking === opt ? 'border-primary bg-primary/5 shadow-sm' : 'hover:bg-muted/50 bg-background'}`}>
+                                    <RadioGroupItem value={opt} id={opt} />
+                                    <Label htmlFor={opt} className="flex-1 cursor-pointer font-medium text-base">{opt}</Label>
+                                </div>
+                            ))}
+                        </RadioGroup>
+                        <div className="flex items-center gap-3 bg-muted/20 p-3 rounded-lg mt-4">
+                            <div className="w-10 h-10 bg-white rounded-full border border-border flex items-center justify-center shrink-0 shadow-sm">
+                                <HorseMascot small />
+                            </div>
+                            <p className="text-xs text-muted-foreground">The app makes it simple. Just a few taps each day.</p>
                         </div>
                     </div>
                 );
@@ -307,9 +301,9 @@ export default function QuizModal({ open, onOpenChange }: QuizModalProps) {
             case 5:
                 return (
                     <div className="space-y-6">
-                        <h3 className="text-xl font-medium text-center" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>How committed are you to tracking?</h3>
+                        <h3 className="text-xl font-medium text-center" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>This is an experiment. How long can you commit to tracking?</h3>
                         <RadioGroup value={formData.commitment} onValueChange={(v) => handleAutoAdvance(v, 'commitment')} className="space-y-3">
-                            {['I want to track everything', 'Just big events', 'I need reminders', 'I\'m not sure yet'].map((opt) => (
+                            {['30 days minimum', '60 days (recommended)', '90 days (best results)', 'I\'ll try, no promises'].map((opt) => (
                                 <div key={opt} className={`flex items-center space-x-3 border p-4 rounded-xl cursor-pointer transition-all duration-200 ${formData.commitment === opt ? 'border-primary bg-primary/5 shadow-sm' : 'hover:bg-muted/50 bg-background'}`}>
                                     <RadioGroupItem value={opt} id={opt} />
                                     <Label htmlFor={opt} className="flex-1 cursor-pointer font-medium text-base">{opt}</Label>
@@ -320,37 +314,21 @@ export default function QuizModal({ open, onOpenChange }: QuizModalProps) {
                             <div className="w-10 h-10 bg-white rounded-full border border-border flex items-center justify-center shrink-0 shadow-sm">
                                 <HorseMascot small />
                             </div>
-                            <p className="text-xs text-muted-foreground">This helps us understand how much automation you need.</p>
+                            <p className="text-xs text-muted-foreground">I saw my first clear pattern around day 30. By day 60, it was undeniable.</p>
                         </div>
                     </div>
                 );
 
             case 6:
                 return (
-                    <div className="space-y-6">
-                        <div className="text-center space-y-2 mb-6">
-                            <h3 className="text-xl font-medium" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>Congrats! You're one step away from your 60-day action plan.</h3>
-                            <p className="text-muted-foreground" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>How would you prefer to learn?</p>
-                        </div>
-
-                        <RadioGroup value={formData.learningStyle} onValueChange={(v) => handleAutoAdvance(v, 'learningStyle')} className="space-y-3">
-                            {['I\'ll learn by doing', 'I want guided lessons', 'I want analytics only'].map((opt) => (
-                                <div key={opt} className={`flex items-center space-x-3 border p-4 rounded-xl cursor-pointer transition-all duration-200 ${formData.learningStyle === opt ? 'border-primary bg-primary/5 shadow-sm' : 'hover:bg-muted/50 bg-background'}`}>
-                                    <RadioGroupItem value={opt} id={opt} />
-                                    <Label htmlFor={opt} className="flex-1 cursor-pointer font-medium text-base">{opt}</Label>
-                                </div>
-                            ))}
-                        </RadioGroup>
-                    </div>
-                );
-
-            case 7:
-                return (
                     <div className="space-y-6 text-center">
                         <div className="space-y-2">
-                            <h3 className="text-2xl font-bold" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>Your results are ready!</h3>
-                            <p className="text-muted-foreground" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
-                                To get your results and a step-by-step guide on mastering your patterns, just enter in your name and email.
+                            <h3 className="text-2xl font-bold" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>Let's See If This Works For You Too</h3>
+                            <p className="text-muted-foreground text-sm max-w-md mx-auto" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
+                                I'll send you your personal risk calendar (based on your birth chart), my findings from tracking 60+ days of decisions, and access to the decision tracker I built.
+                            </p>
+                            <p className="text-muted-foreground text-sm font-medium max-w-md mx-auto pt-2" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
+                                No promises. Just honest experimentation.
                             </p>
                         </div>
 
@@ -413,7 +391,7 @@ export default function QuizModal({ open, onOpenChange }: QuizModalProps) {
                                     className="mt-0.5"
                                 />
                                 <Label htmlFor="terms" className="text-xs text-muted-foreground font-normal leading-tight">
-                                    I agree to receive my quiz results and a series of emails that will teach me how to interpret my patterns.
+                                    Send me my chart and updates on what patterns I discover. I can unsubscribe anytime.
                                 </Label>
                             </div>
                             {errors.agreeToTerms && (
@@ -432,7 +410,7 @@ export default function QuizModal({ open, onOpenChange }: QuizModalProps) {
                         )}
 
                         <p className="text-[10px] text-muted-foreground/60 max-w-sm mx-auto">
-                            By clicking the button below, you consent for us to contact you at the number and email address provided. Privacy Policy.
+                            I'm not a BaZi master. I'm just someone who got tired of repeating mistakes and built a tool to track patterns. Privacy Policy.
                         </p>
                     </div>
                 );
@@ -474,8 +452,8 @@ export default function QuizModal({ open, onOpenChange }: QuizModalProps) {
                     </div>
                 </div>
 
-                {/* Footer Actions - Only for Step 7 */}
-                {step === 7 && (
+                {/* Footer Actions - Only for Step 6 */}
+                {step === 6 && (
                     <div className="absolute bottom-0 left-0 right-0 p-6 bg-white/80 backdrop-blur-sm border-t border-border/40 flex justify-center items-center gap-4 max-w-3xl mx-auto w-full">
                         <Button
                             onClick={handleNext}
@@ -485,7 +463,7 @@ export default function QuizModal({ open, onOpenChange }: QuizModalProps) {
                             {loading ? (
                                 <Loader2 className="w-4 h-4 animate-spin" />
                             ) : (
-                                'Yes, Send Me The Results'
+                                'Yes, Send Me My Chart'
                             )}
                         </Button>
                     </div>
