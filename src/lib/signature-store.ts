@@ -12,14 +12,14 @@ export interface AppStoreData {
 }
 
 export const MISTAKE_TAGS = [
-  'Self-Punishment',
-  'Hidden-Intellect',
-  'Spent money emotionally',
-  'Trusted too fast',
-  'Conflict',
-  'Impulsive decision',
-  'Social approval seeking',
-  'Avoided responsibility',
+  'self-punishment',
+  'bully-punishment',
+  'ungrateful-punishment',
+  'uncivilised-punishment',
+  'harm',
+  'clash',
+  'destruction',
+  'harmony',
 ] as const;
 
 export type MistakeTag = string;
