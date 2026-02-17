@@ -112,7 +112,7 @@ export function DataManagementDialog({ open, onClose }: DataManagementDialogProp
 
     return (
         <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
-            <DialogContent className="max-w-xs">
+            <DialogContent className="max-w-md">
                 <DialogHeader>
                     <DialogTitle>Data Management</DialogTitle>
                     <DialogDescription>
@@ -120,7 +120,7 @@ export function DataManagementDialog({ open, onClose }: DataManagementDialogProp
                     </DialogDescription>
                 </DialogHeader>
 
-                <div className="space-y-4 py-4">
+                <div className="space-y-4">
                     <div className="space-y-2">
                         <h4 className="text-sm font-medium">Backup</h4>
                         <p className="text-xs text-muted-foreground">

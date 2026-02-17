@@ -98,7 +98,7 @@ const SignatureDialog = ({ open, onClose, signature, dateLabel, dateStr }: Signa
 
   return (
     <Dialog open={open} onOpenChange={v => !v && onClose()}>
-      <DialogContent className="max-w-md">
+      <DialogContent className="max-w-md" useFlexLayout>
         {/* Fixed Header - Always visible at top */}
         <DialogHeader>
           <DialogTitle className="font-serif flex items-center gap-2">
