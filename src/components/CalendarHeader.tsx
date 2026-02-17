@@ -120,6 +120,17 @@ const CalendarHeader = ({ view, onViewChange, selectedDate }: CalendarHeaderProp
           <div className="text-sm text-muted-foreground space-y-2 py-2">
             <p>Version 1.1.0</p>
             <p>PWA enabled for standalone mobile experience.</p>
+            <div className="pt-2 border-t border-border">
+              <p className="font-medium text-foreground mb-1">Community</p>
+              <a 
+                href="https://discord.gg/gMhvWg5Q" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-primary hover:underline flex items-center gap-1"
+              >
+                Join our Discord
+              </a>
+            </div>
           </div>
         </DialogContent>
       </Dialog>
