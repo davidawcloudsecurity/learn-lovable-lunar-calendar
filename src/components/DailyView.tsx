@@ -95,7 +95,7 @@ const DailyView = ({ selectedDate, onDateChange }: DailyViewProps) => {
         <button onClick={prevMonth} className="p-1 hover:bg-muted rounded-lg">
           <ChevronLeft className="w-5 h-5" />
         </button>
-        <h2 className="font-serif text-base font-semibold">
+        <h2 className="font-serif text-lg font-semibold">
           {selectedDate.toLocaleDateString('en-US', { month: 'long' })}, {year}
         </h2>
         <button onClick={nextMonth} className="p-1 hover:bg-muted rounded-lg">
