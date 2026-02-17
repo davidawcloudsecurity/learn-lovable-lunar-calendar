@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { getDaySignature, getPatternsByBranch, analyzeSignature, SignatureEntry } from '@/lib/signature-store';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { AlertTriangle, Bell, Info, X } from 'lucide-react';
@@ -24,6 +24,12 @@ export function NotificationManager() {
     const [permission, setPermission] = useState<NotificationPermission>(
         typeof Notification !== 'undefined' ? Notification.permission : 'default'
     );
+    
+    // Swipe/drag gesture state
+    const touchStartX = useRef<number>(0);
+    const touchStartY = useRef<number>(0);
+    const [swipeOffset, setSwipeOffset] = useState(0);
+    const [isDragging, setIsDragging] = useState(false);
 
     useEffect(() => {
         const checkPatterns = () => {
@@ -169,8 +175,80 @@ export function NotificationManager() {
 
     const colors = getColors(activePrediction.riskLevel);
 
+    // Touch gesture handlers
+    const handleTouchStart = (e: React.TouchEvent) => {
+        touchStartX.current = e.touches[0].clientX;
+        touchStartY.current = e.touches[0].clientY;
+    };
+
+    const handleTouchMove = (e: React.TouchEvent) => {
+        const deltaX = e.touches[0].clientX - touchStartX.current;
+        const deltaY = e.touches[0].clientY - touchStartY.current;
+        
+        // Only track horizontal swipes (ignore vertical scrolling)
+        if (Math.abs(deltaX) > Math.abs(deltaY)) {
+            setSwipeOffset(deltaX);
+        }
+    };
+
+    const handleTouchEnd = () => {
+        const threshold = 100; // pixels to trigger dismiss
+        
+        if (Math.abs(swipeOffset) > threshold) {
+            setDismissed(true);
+        }
+        
+        setSwipeOffset(0);
+    };
+
+    // Mouse drag handlers (for desktop)
+    const handleMouseDown = (e: React.MouseEvent) => {
+        setIsDragging(true);
+        touchStartX.current = e.clientX;
+        touchStartY.current = e.clientY;
+    };
+
+    const handleMouseMove = (e: React.MouseEvent) => {
+        if (!isDragging) return;
+        
+        const deltaX = e.clientX - touchStartX.current;
+        const deltaY = e.clientY - touchStartY.current;
+        
+        // Only track horizontal drags
+        if (Math.abs(deltaX) > Math.abs(deltaY)) {
+            setSwipeOffset(deltaX);
+        }
+    };
+
+    const handleMouseUp = () => {
+        if (!isDragging) return;
+        
+        const threshold = 100;
+        
+        if (Math.abs(swipeOffset) > threshold) {
+            setDismissed(true);
+        }
+        
+        setSwipeOffset(0);
+        setIsDragging(false);
+    };
+
     return (
-        <div className="fixed bottom-4 left-4 right-4 z-50 animate-in fade-in slide-in-from-bottom-5">
+        <div 
+            className="fixed bottom-4 left-4 right-4 z-50 animate-in fade-in slide-in-from-bottom-5 transition-transform cursor-grab active:cursor-grabbing"
+            style={{
+                transform: `translateX(${swipeOffset}px)`,
+                opacity: Math.max(0.5, 1 - Math.abs(swipeOffset) / 300),
+                userSelect: 'none'
+            }}
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+            onMouseDown={handleMouseDown}
+            onMouseMove={handleMouseMove}
+            onMouseUp={handleMouseUp}
+            onMouseLeave={handleMouseUp}
+        >
             <Alert className={`shadow-lg border-2 ${colors.bg} ${colors.border}`}>
                 <AlertTriangle className={`h-4 w-4 ${colors.icon}`} />
                 <div className="flex-1">
@@ -193,12 +271,6 @@ export function NotificationManager() {
                         You've logged <span className="font-medium text-amber-900">{activePrediction.topTag}</span> most often on this branch.
                     </AlertDescription>
                 </div>
-                <button
-                    onClick={() => setDismissed(true)}
-                    className={`ml-4 p-1 ${colors.button}`}
-                >
-                    <X className="h-4 w-4" />
-                </button>
             </Alert>
         </div>
     );
