@@ -191,7 +191,14 @@ const SignatureDialog = ({ open, onClose, signature, dateLabel, dateStr }: Signa
                 <Input
                   placeholder="New pattern tag..."
                   value={newTagInput}
-                  onChange={e => setNewTagInput(e.target.value.toLowerCase().replace(/\s+/g, '-').replace(/-+/g, '-'))}
+                  onChange={e => {
+                    const sanitized = e.target.value
+                      .toLowerCase()
+                      .replace(/[^a-z0-9\s-]/g, '')
+                      .replace(/\s+/g, '-')
+                      .replace(/-+/g, '-');
+                    setNewTagInput(sanitized);
+                  }}
                   className="h-9 text-sm"
                   onKeyDown={(e) => e.key === 'Enter' && handleAddTag()}
                 />
@@ -230,7 +237,10 @@ const SignatureDialog = ({ open, onClose, signature, dateLabel, dateStr }: Signa
               <Textarea
                 placeholder="Optional note..."
                 value={noteText}
-                onChange={e => setNoteText(e.target.value)}
+                onChange={e => {
+                  const sanitized = e.target.value.replace(/[^a-zA-Z0-9\s.,!?-]/g, '');
+                  setNoteText(sanitized);
+                }}
                 className="resize-none text-sm"
                 rows={2}
               />
