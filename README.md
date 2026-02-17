@@ -60,7 +60,6 @@ Relationship and social issues: Conflicts, breakups, or “forced” decisions i
 
 Mental and emotional strain: Constant dissatisfaction, inner turmoil, or feeling like your dreams are “shattered” or blocked.
 ​
-
 4. When it can be useful
 Destruction can act as “creative destruction”: breaking old, stuck patterns so something new can emerge.
 | Rat 子              | Rooster 酉                            |
