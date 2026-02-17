@@ -65,7 +65,8 @@ const SignatureDialog = ({ open, onClose, signature, dateLabel, dateStr }: Signa
   };
 
   const handleAddTag = () => {
-    if (addCustomTag(newTagInput)) {
+    const sanitized = newTagInput.replace(/^-+|-+$/g, '').trim();
+    if (sanitized && addCustomTag(sanitized)) {
       setAvailableTags(loadCustomTags());
       setNewTagInput('');
     }
