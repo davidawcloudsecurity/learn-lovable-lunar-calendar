@@ -7,7 +7,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useNavigate } from 'react-router-dom';
 import HorseMascot from '@/components/HorseMascot';
-import { ArrowLeft, ArrowRight, Loader2, Shield, TrendingUp, Eye } from 'lucide-react';
+import { ArrowLeft, Loader2, Shield, TrendingUp, Eye } from 'lucide-react';
 import { submitQuizToGoogleSheets } from '@/lib/quiz-submission';
 import { useToast } from '@/hooks/use-toast';
 
@@ -114,6 +114,16 @@ export default function QuizModal({ open, onOpenChange }: QuizModalProps) {
         } else {
             handleSubmit();
         }
+    };
+
+    const handleAutoAdvance = (value: string, key: string) => {
+        updateData(key, value);
+        // Auto-advance after a short delay to show selection
+        setTimeout(() => {
+            if (step < TOTAL_STEPS) {
+                setStep(step + 1);
+            }
+        }, 300);
     };
 
     const handleBack = () => {
@@ -228,7 +238,7 @@ export default function QuizModal({ open, onOpenChange }: QuizModalProps) {
                                 </p>
                             </div>
                         )}
-                        <RadioGroup value={formData.experience} onValueChange={(v) => updateData('experience', v)} className="space-y-3">
+                        <RadioGroup value={formData.experience} onValueChange={(v) => handleAutoAdvance(v, 'experience')} className="space-y-3">
                             {['Beginner', 'Intermediate', 'Advanced'].map((opt) => (
                                 <div key={opt} className={`flex items-center space-x-3 border p-4 rounded-xl cursor-pointer transition-all duration-200 ${formData.experience === opt ? 'border-primary bg-primary/5 shadow-sm' : 'hover:bg-muted/50 bg-background'}`}>
                                     <RadioGroupItem value={opt} id={opt} />
@@ -249,7 +259,7 @@ export default function QuizModal({ open, onOpenChange }: QuizModalProps) {
                 return (
                     <div className="space-y-6">
                         <h3 className="text-xl font-medium text-center" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>What do you want to achieve?</h3>
-                        <RadioGroup value={formData.goal} onValueChange={(v) => updateData('goal', v)} className="space-y-3">
+                        <RadioGroup value={formData.goal} onValueChange={(v) => handleAutoAdvance(v, 'goal')} className="space-y-3">
                             {[
                                 { val: 'Avoid bad decisions', icon: Shield },
                                 { val: 'Understand my patterns', icon: Eye },
@@ -277,7 +287,7 @@ export default function QuizModal({ open, onOpenChange }: QuizModalProps) {
                 return (
                     <div className="space-y-6">
                         <h3 className="text-xl font-medium text-center" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>How often do you check your chart?</h3>
-                        <RadioGroup value={formData.frequency} onValueChange={(v) => updateData('frequency', v)} className="space-y-3">
+                        <RadioGroup value={formData.frequency} onValueChange={(v) => handleAutoAdvance(v, 'frequency')} className="space-y-3">
                             {['Daily', 'Weekly', 'Monthly', 'Rarely'].map((opt) => (
                                 <div key={opt} className={`flex items-center space-x-3 border p-4 rounded-xl cursor-pointer transition-all duration-200 ${formData.frequency === opt ? 'border-primary bg-primary/5 shadow-sm' : 'hover:bg-muted/50 bg-background'}`}>
                                     <RadioGroupItem value={opt} id={opt} />
@@ -298,7 +308,7 @@ export default function QuizModal({ open, onOpenChange }: QuizModalProps) {
                 return (
                     <div className="space-y-6">
                         <h3 className="text-xl font-medium text-center" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>How committed are you to tracking?</h3>
-                        <RadioGroup value={formData.commitment} onValueChange={(v) => updateData('commitment', v)} className="space-y-3">
+                        <RadioGroup value={formData.commitment} onValueChange={(v) => handleAutoAdvance(v, 'commitment')} className="space-y-3">
                             {['I want to track everything', 'Just big events', 'I need reminders', 'I\'m not sure yet'].map((opt) => (
                                 <div key={opt} className={`flex items-center space-x-3 border p-4 rounded-xl cursor-pointer transition-all duration-200 ${formData.commitment === opt ? 'border-primary bg-primary/5 shadow-sm' : 'hover:bg-muted/50 bg-background'}`}>
                                     <RadioGroupItem value={opt} id={opt} />
@@ -323,7 +333,7 @@ export default function QuizModal({ open, onOpenChange }: QuizModalProps) {
                             <p className="text-muted-foreground" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>How would you prefer to learn?</p>
                         </div>
 
-                        <RadioGroup value={formData.learningStyle} onValueChange={(v) => updateData('learningStyle', v)} className="space-y-3">
+                        <RadioGroup value={formData.learningStyle} onValueChange={(v) => handleAutoAdvance(v, 'learningStyle')} className="space-y-3">
                             {['I\'ll learn by doing', 'I want guided lessons', 'I want analytics only'].map((opt) => (
                                 <div key={opt} className={`flex items-center space-x-3 border p-4 rounded-xl cursor-pointer transition-all duration-200 ${formData.learningStyle === opt ? 'border-primary bg-primary/5 shadow-sm' : 'hover:bg-muted/50 bg-background'}`}>
                                     <RadioGroupItem value={opt} id={opt} />
@@ -434,11 +444,17 @@ export default function QuizModal({ open, onOpenChange }: QuizModalProps) {
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="max-w-none w-screen h-screen sm:max-w-none sm:w-screen sm:h-screen sm:rounded-none sm:border-none flex flex-col p-0 gap-0 overflow-hidden border-none shadow-none rounded-none bg-white">
-                {/* Close Button is usually provided by DialogContent, ensure it's visible if needed, 
-                    but here we might want to let the user close it naturally or add a custom one if the default is hidden/styled oddly. 
-                    Default DialogContent usually has a Close button. We'll rely on that for now or check if we need to overriding styles.
-                */}
+            <DialogContent showClose={step === 1} className="max-w-none w-screen h-screen sm:max-w-none sm:w-screen sm:h-screen sm:rounded-none sm:border-none flex flex-col p-0 gap-0 overflow-hidden border-none shadow-none rounded-none bg-white">
+                {/* Back Button - Only shows on steps 2+ */}
+                {step > 1 && (
+                    <button
+                        onClick={handleBack}
+                        className="absolute top-4 right-4 z-[60] rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
+                    >
+                        <ArrowLeft className="w-4 h-4" />
+                        <span>Back</span>
+                    </button>
+                )}
 
                 {/* Content Area - Centered */}
                 <div className="flex-1 flex flex-col items-center justify-center p-6 sm:p-8 bg-background relative">
@@ -458,29 +474,18 @@ export default function QuizModal({ open, onOpenChange }: QuizModalProps) {
                     </div>
                 </div>
 
-                {/* Footer Actions */}
-                {step > 1 && (
-                    <div className="absolute bottom-0 left-0 right-0 p-6 bg-white/80 backdrop-blur-sm border-t border-border/40 flex justify-between items-center gap-4 max-w-3xl mx-auto w-full">
-                        <Button
-                            variant="ghost"
-                            onClick={handleBack}
-                            disabled={step === 1}
-                            className={`text-muted-foreground hover:text-foreground ${step === 1 ? 'opacity-0 pointer-events-none' : ''}`}
-                        >
-                            <ArrowLeft className="w-4 h-4 mr-2" /> Back
-                        </Button>
-
+                {/* Footer Actions - Only for Step 7 */}
+                {step === 7 && (
+                    <div className="absolute bottom-0 left-0 right-0 p-6 bg-white/80 backdrop-blur-sm border-t border-border/40 flex justify-center items-center gap-4 max-w-3xl mx-auto w-full">
                         <Button
                             onClick={handleNext}
-                            disabled={loading || (step === TOTAL_STEPS && !formData.agreeToTerms)}
+                            disabled={loading || !formData.agreeToTerms}
                             className="w-full sm:w-auto min-w-[140px] px-8 py-6 text-base shadow-lg shadow-primary/20 transition-all hover:shadow-primary/30 hover:scale-[1.02]"
                         >
                             {loading ? (
                                 <Loader2 className="w-4 h-4 animate-spin" />
-                            ) : step === TOTAL_STEPS ? (
-                                'Yes, Send Me The Results'
                             ) : (
-                                <>Next <ArrowRight className="w-4 h-4 ml-2" /></>
+                                'Yes, Send Me The Results'
                             )}
                         </Button>
                     </div>
