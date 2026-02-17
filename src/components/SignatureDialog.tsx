@@ -17,6 +17,8 @@ import {
   deleteCustomTag,
   loadSignatureStore,
 } from '@/lib/signature-store';
+import { loadProfile, getProfileBranches } from '@/lib/bazi-profile';
+import { calculateRiskLevel } from '@/lib/bazi-calculator';
 
 interface SignatureDialogProps {
   open: boolean;
@@ -38,6 +40,14 @@ const SignatureDialog = ({ open, onClose, signature, dateLabel, dateStr }: Signa
   // Prevent background page scroll when modal is open
   useLockBodyScroll(open);
 
+  // Calculate BaZi risk level for this day
+  const profile = loadProfile();
+  const userBranches = getProfileBranches(profile);
+  const dailyBranch = signature[1]; // Extract earthly branch from signature (e.g., "戊午" -> "午")
+  const riskInfo = userBranches.length > 0
+    ? calculateRiskLevel(dailyBranch, userBranches)
+    : null;
+
   useEffect(() => {
     if (open) {
       setEntries(getSignatureEntries(signature));
@@ -50,6 +60,43 @@ const SignatureDialog = ({ open, onClose, signature, dateLabel, dateStr }: Signa
   }, [open, signature]);
 
   const analysis = useMemo(() => analyzeSignature(entries), [entries]);
+
+  // Determine warning panel colors based on risk level
+  const warningColors = useMemo(() => {
+    if (!riskInfo) {
+      // Default to red if no profile
+      return {
+        bg: 'bg-destructive/10',
+        border: 'border-destructive/30',
+        text: 'text-destructive',
+        icon: '🔴'
+      };
+    }
+
+    switch (riskInfo.level) {
+      case 'low': // Harmony
+        return {
+          bg: 'bg-green-500/10',
+          border: 'border-green-500/30',
+          text: 'text-green-700 dark:text-green-400',
+          icon: '🟢'
+        };
+      case 'medium': // Harm/Neutral
+        return {
+          bg: 'bg-yellow-500/10',
+          border: 'border-yellow-500/30',
+          text: 'text-yellow-700 dark:text-yellow-400',
+          icon: '🟡'
+        };
+      case 'high': // Clash/Punishment
+        return {
+          bg: 'bg-red-500/10',
+          border: 'border-red-500/30',
+          text: 'text-red-700 dark:text-red-400',
+          icon: '🔴'
+        };
+    }
+  }, [riskInfo]);
 
   const handleLog = () => {
     if (!selectedTag) return;
@@ -113,10 +160,11 @@ const SignatureDialog = ({ open, onClose, signature, dateLabel, dateStr }: Signa
         <DialogBody className="space-y-3">
           {/* Warning Panel */}
           {analysis && analysis.totalLogs > 0 && (
-            <div className="bg-destructive/10 border border-destructive/30 rounded-lg p-3 space-y-2">
-              <div className="flex items-center gap-2 text-destructive font-semibold text-sm">
+            <div className={`${warningColors.bg} border ${warningColors.border} rounded-lg p-3 space-y-2`}>
+              <div className={`flex items-center gap-2 ${warningColors.text} font-semibold text-sm`}>
                 <AlertTriangle className="w-4 h-4" />
-                <span>⚠ Pattern Warning — {signature}</span>
+                <span>{warningColors.icon} Pattern Warning — {signature}</span>
+                {riskInfo && <span className="text-xs font-normal">({riskInfo.reason})</span>}
               </div>
 
               <div className="grid grid-cols-2 gap-2 text-sm">
