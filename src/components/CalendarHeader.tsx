@@ -48,10 +48,10 @@ const CalendarHeader = ({ view, onViewChange, selectedDate }: CalendarHeaderProp
       {/* Title row */}
       <div className="flex items-center justify-between">
         <div className="flex flex-col">
-          <h1 className="text-xl font-bold leading-tight">
+          <h1 className="text-lg font-bold leading-tight">
             {selectedDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
           </h1>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-xs text-muted-foreground">
             {stemBranch.full}年 · {stemBranch.element}{zodiac.cn}年
           </p>
         </div>

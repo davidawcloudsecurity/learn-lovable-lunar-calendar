@@ -95,7 +95,7 @@ const DailyView = ({ selectedDate, onDateChange }: DailyViewProps) => {
         <button onClick={prevMonth} className="p-1 hover:bg-muted rounded-lg">
           <ChevronLeft className="w-5 h-5" />
         </button>
-        <h2 className="font-serif text-xl font-semibold">
+        <h2 className="font-serif text-lg font-semibold">
           {selectedDate.toLocaleDateString('en-US', { month: 'long' })}, {year}
         </h2>
         <button onClick={nextMonth} className="p-1 hover:bg-muted rounded-lg">
@@ -180,15 +180,6 @@ const DailyView = ({ selectedDate, onDateChange }: DailyViewProps) => {
         })}
       </div>
 
-      {/* Solar terms for this month at the bottom */}
-      {monthSolarTerms.length > 0 && (
-        <div className="mt-3 px-1 text-xs text-muted-foreground space-y-0.5">
-          {monthSolarTerms.map(t => (
-            <div key={t.name}>{t.day} — {t.en} ({t.name})</div>
-          ))}
-        </div>
-      )}
-
       {/* Risk Level Legend */}
       <div className="mt-3 px-1 text-sm space-y-0.5 border-t border-border/40 pt-2">
         <div className="font-semibold text-primary">Daily Risk Levels (Work Focus):</div>
@@ -236,6 +227,15 @@ const DailyView = ({ selectedDate, onDateChange }: DailyViewProps) => {
           </div>
         );
       })()}
+
+      {/* Solar terms for this month */}
+      {monthSolarTerms.length > 0 && (
+        <div className="mt-3 px-1 text-xs text-muted-foreground space-y-0.5">
+          {monthSolarTerms.map(t => (
+            <div key={t.name}>{t.day} — {t.en} ({t.name})</div>
+          ))}
+        </div>
+      )}
 
       {noteDate && (
         <SignatureDialog
