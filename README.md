@@ -63,6 +63,18 @@ Mental and emotional strain: Constant dissatisfaction, inner turmoil, or feeling
 
 4. When it can be useful
 Destruction can act as “creative destruction”: breaking old, stuck patterns so something new can emerge.
+| Rat 子              | Rooster 酉                            |
+| Rooster 酉          | Rat 子                                |
+| Pig 亥              | Tiger 寅                              |
+| Tiger 寅            | Pig 亥                                |
+| Dog 戌              | Rabbit 卯                             |
+| Rabbit 卯           | Dog 戌                                |
+| Goat 未             | Horse 午                              |
+| Horse 午            | Goat 未                               |
+| Monkey 申           | Snake 巳                              |
+| Snake 巳            | Monkey 申                             |
+| Ox 丑               | Dragon 辰                             |
+| Dragon 辰           | Ox 丑
 
 If the destroyed element is unfavorable, it may remove a burden; the key is to adapt, learn, and redirect rather than resist the change.
 
