@@ -1,5 +1,17 @@
 # Welcome to your Lovable project
+### Tables
+```
+Here’s a simple table showing what each BaZi pillar represents, especially in the context of penalties, destruction, and punishments:
+|--------|-----------------------------------------------------------------------|----------------------------------------------------------------------------------------------|
+| Pillar |                   Life area / meaning                                 |                             Key themes (for penalties / destruction)                         |
+|--------|-----------------------------------------------------------------------|----------------------------------------------------------------------------------------------|
+| Year   | Roots, parents, ancestors, early environment, health of head/neck     | Family tension, inherited patterns, health issues, or “background” luck turning against you. |
+| Month  | Siblings, peers, career, social circle, adolescence, chest/upper body | Work conflicts, business setbacks, social drama, or blocked opportunities.                   |
+| Day    | Self, spouse/partner, marriage, adult life, abdomen/digestive system  | Relationship problems, self‑sabotage, forced actions, or health issues in mid‑life.          |
+| Hour   | Children, later years, creativity, lower limbs/feet                   | Issues with kids, legacy, late‑life stress, or accidents in old age.                         |
+|--------|-----------------------------------------------------------------------|----------------------------------------------------------------------------------------------|
 
+```
 ### Six Harmony Combinations (六合) and Their Attributes:
 ```
 Mao and Xu (卯戌相合): This combination symbolises a barren mountain transformed by greenery, with individuals representing respect, diplomacy, and harmony in relationships. This combination produces Fire, due to the interaction between Wu Earth (戊土) and Yi Wood (乙木).
@@ -26,6 +38,54 @@ Shen and Hai (申亥相害): This pairing signifies a fear of commitment and mis
 Chou and Wu (丑午相害): The Ox-Horse Six Harm combination causes self-worth issues, with individuals feeling undervalued and reluctant to fully engage with peers. Their lack of understanding in relationships can lead to strained connections and personal dissatisfaction.
 Zi and Wei (子未相害): The Rat-Goat Six Harm combination leads to clouded judgment, exaggeration of problems, and aversion to risks. This pairing tends to assume worst-case scenarios, inhibiting growth and independence.
 Yin and Si (寅巳相害): Associated with distrust of others and scepticism towards positive experiences, this harm may result in misjudged interactions. Dominance of this combination in a chart can indicate heightened accident risks, requiring careful mitigation.
+```
+### Destruction
+```
+Destruction in the day (破 Po). Destruction in Bazi is behavior, attitude or actions that are obviously destructive to the person himself
+
+1. What Destruction is
+Destruction (破) is a side‑by‑side clash between certain Earthly Branches in your BaZi chart or in the 10‑year, year, month, or day pillars.
+
+It indicates forced, damaging actions you take that hurt yourself or your situation, often under pressure or feeling “backed into a corner.”
+
+2. Where it appears
+In the natal chart: Lifelong tendency toward self‑destructive habits, poor choices, or repeated setbacks that stem from your own behavior.
+
+In Fortune / Year / Month / Day pillar: A temporary period of conflict, breakdown, or loss; you may feel pushed into actions you later regret.
+
+3. Types of problems it causes
+Self‑destructive behavior: Addictions (alcohol, drugs), reckless spending, or harmful routines that damage health, wealth, or relationships.
+
+Relationship and social issues: Conflicts, breakups, or “forced” decisions in love, family, or work; misunderstandings and division when Destruction hits the Marriage / Day pillar.
+
+Mental and emotional strain: Constant dissatisfaction, inner turmoil, or feeling like your dreams are “shattered” or blocked.
+​
+
+4. When it can be useful
+Destruction can act as “creative destruction”: breaking old, stuck patterns so something new can emerge.
+| Rat 子              | Rooster 酉                            |
+| Rooster 酉          | Rat 子                                |
+| Pig 亥              | Tiger 寅                              |
+| Tiger 寅            | Pig 亥                                |
+| Dog 戌              | Rabbit 卯                             |
+| Rabbit 卯           | Dog 戌                                |
+| Goat 未             | Horse 午                              |
+| Horse 午            | Goat 未                               |
+| Monkey 申           | Snake 巳                              |
+| Snake 巳            | Monkey 申                             |
+| Ox 丑               | Dragon 辰                             |
+| Dragon 辰           | Ox 丑
+
+If the destroyed element is unfavorable, it may remove a burden; the key is to adapt, learn, and redirect rather than resist the change.
+
+5. Practical action steps
+Avoid big moves on Destruction days: Don’t start projects, sign contracts, or make major life decisions on Destruction days; use them for reflection and small, safe actions.
+
+Watch your habits: Identify and replace self‑sabotaging patterns (impulsive decisions, over‑indulgence) with structure and discipline.
+
+Protect key areas: If Destruction hits Marriage / Day pillar, avoid forcing relationship changes; focus on communication and patience instead.
+
+
 ```
 ### The Fire Ungrateful Punishment Day
 ```
