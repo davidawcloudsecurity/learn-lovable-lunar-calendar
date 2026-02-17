@@ -57,19 +57,47 @@ export function loadAppStore(): AppStoreData {
     let store: AppStoreData;
 
     if (!data) {
-      store = { signatures: {}, profile: null };
+      store = { signatures: {}, profile: null, customTags: [...MISTAKE_TAGS] };
     } else {
       const parsed = JSON.parse(data);
       if (parsed && typeof parsed === 'object' && !parsed.signatures && !parsed.profile) {
         // Old format: parsed is Record<string, DaySignatureData>
-        store = { signatures: parsed, profile: null, customTags: [...MISTAKE_TAGS] };
+        // Check if customTags exists in old format, otherwise merge with defaults
+        const existingTags = parsed.customTags;
+        let finalTags: string[];
+        
+        if (Array.isArray(existingTags)) {
+          // User had custom tags - merge with defaults, keeping user tags
+          const defaultSet = new Set(MISTAKE_TAGS);
+          const userOnlyTags = existingTags.filter(t => !defaultSet.has(t));
+          finalTags = [...MISTAKE_TAGS, ...userOnlyTags];
+        } else {
+          finalTags = [...MISTAKE_TAGS];
+        }
+        
+        store = { 
+          signatures: parsed, 
+          profile: null, 
+          customTags: finalTags
+        };
       } else {
+        // New format
+        const existingTags = parsed.customTags;
+        let finalTags: string[];
+        
+        if (Array.isArray(existingTags)) {
+          // Merge existing tags with defaults, preserving user additions
+          const defaultSet = new Set(MISTAKE_TAGS);
+          const userOnlyTags = existingTags.filter(t => !defaultSet.has(t));
+          finalTags = [...MISTAKE_TAGS, ...userOnlyTags];
+        } else {
+          finalTags = [...MISTAKE_TAGS];
+        }
+        
         store = {
           signatures: parsed.signatures || {},
           profile: parsed.profile || null,
-          customTags: parsed.customTags !== undefined && parsed.customTags !== null
-            ? parsed.customTags
-            : [...MISTAKE_TAGS]
+          customTags: finalTags
         };
       }
     }
