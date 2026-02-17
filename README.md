@@ -1,5 +1,14 @@
 # Welcome to your Lovable project
+### Tables
+```
+Here’s a simple table showing what each BaZi pillar represents, especially in the context of penalties, destruction, and punishments:
 
+Pillar	Life area / meaning	Key themes (for penalties / destruction)
+Year	Roots, parents, ancestors, early environment, health of head/neck	When hit: family tension, inherited patterns, health issues, or “background” luck turning against you.
+Month	Siblings, peers, career, social circle, adolescence, chest/upper body	When hit: work conflicts, business setbacks, social drama, or blocked opportunities.
+Day	Self, spouse/partner, marriage, adult life, abdomen/digestive system	When hit: relationship problems, self‑sabotage, forced actions, or health issues in mid‑life.
+Hour	Children, later years, creativity, lower limbs/feet	When hit: issues with kids, legacy, late‑life stress, or accidents in old age.
+```
 ### Six Harmony Combinations (六合) and Their Attributes:
 ```
 Mao and Xu (卯戌相合): This combination symbolises a barren mountain transformed by greenery, with individuals representing respect, diplomacy, and harmony in relationships. This combination produces Fire, due to the interaction between Wu Earth (戊土) and Yi Wood (乙木).
