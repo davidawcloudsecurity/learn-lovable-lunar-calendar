@@ -17,9 +17,12 @@ const Index = () => {
       }
     };
 
-    // Push state when entering hourly view
+    // Push state when entering hourly view (only if not already in history)
     if (view === 'hourly') {
-      window.history.pushState({ view: 'hourly' }, '');
+      const currentState = window.history.state;
+      if (!currentState || currentState.view !== 'hourly') {
+        window.history.pushState({ view: 'hourly' }, '');
+      }
     }
 
     window.addEventListener('popstate', handlePopState);
