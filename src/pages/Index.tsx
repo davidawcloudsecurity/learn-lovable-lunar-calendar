@@ -15,7 +15,7 @@ const Index = () => {
 
       <main className="flex-1 overflow-y-auto">
         {view === 'hourly' && <HourlyView selectedDate={selectedDate} />}
-        {view === 'daily' && <DailyView selectedDate={selectedDate} onDateChange={setSelectedDate} />}
+        {view === 'daily' && <DailyView selectedDate={selectedDate} onDateChange={setSelectedDate} onViewChange={setView} />}
         {view === 'monthly' && (
           <MonthlyView selectedDate={selectedDate} onDateChange={setSelectedDate} onViewChange={setView as any} />
         )}
