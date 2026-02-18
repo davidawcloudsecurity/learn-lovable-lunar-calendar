@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { MoreVertical, Settings, Info, Search, Clock, Calendar, CalendarDays, CalendarRange, Database, HelpCircle } from 'lucide-react';
+import { MoreVertical, Settings, Info, Search, Clock, Calendar, CalendarDays, CalendarRange, Database, HelpCircle, Crown } from 'lucide-react';
 import HorseMascot from './HorseMascot';
 import { getYearZodiac, getYearStemBranch } from '@/lib/chinese-calendar';
 import {
@@ -43,6 +43,9 @@ const CalendarHeader = ({ view, onViewChange, selectedDate, onShowHelp }: Calend
   const year = selectedDate.getFullYear();
   const zodiac = getYearZodiac(year);
   const stemBranch = getYearStemBranch(year);
+  
+  // Get payment link from environment variable
+  const STRIPE_PAYMENT_LINK = import.meta.env.VITE_STRIPE_PAYMENT_LINK;
 
   return (
     <header className="bg-card border-b border-border px-4 py-3">
@@ -57,7 +60,15 @@ const CalendarHeader = ({ view, onViewChange, selectedDate, onShowHelp }: Calend
           </p>
         </div>
 
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-2">
+          <button 
+            onClick={() => window.open(STRIPE_PAYMENT_LINK, '_blank')}
+            className="px-3 py-1 text-xs font-semibold text-yellow-600 dark:text-yellow-500 hover:bg-yellow-50 dark:hover:bg-yellow-950/20 rounded-full transition-colors flex items-center gap-1 border border-yellow-300 dark:border-yellow-700"
+          >
+            <Crown className="w-3.5 h-3.5" />
+            <span>UPGRADE</span>
+          </button>
+          
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <button className="p-1 hover:bg-muted rounded-full transition-colors flex items-center justify-center">
@@ -90,15 +101,6 @@ const CalendarHeader = ({ view, onViewChange, selectedDate, onShowHelp }: Calend
             <DropdownMenuContent align="end" className="w-48">
               <DropdownMenuLabel>Calendar Menu</DropdownMenuLabel>
               <DropdownMenuSeparator />
-              {onShowHelp && (
-                <>
-                  <DropdownMenuItem onClick={onShowHelp}>
-                    <HelpCircle className="mr-2 h-4 w-4" />
-                    <span>Help & Tutorial</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                </>
-              )}
               <DropdownMenuItem onClick={() => setProfileOpen(true)}>
                 <Settings className="mr-2 h-4 w-4" />
                 <span>BaZi Settings</span>
