@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { MoreVertical, Settings, Info, Search, Clock, Calendar, CalendarDays, CalendarRange, Database } from 'lucide-react';
+import { MoreVertical, Settings, Info, Search, Clock, Calendar, CalendarDays, CalendarRange, Database, HelpCircle, Crown } from 'lucide-react';
 import HorseMascot from './HorseMascot';
 import { getYearZodiac, getYearStemBranch } from '@/lib/chinese-calendar';
 import {
@@ -26,6 +26,7 @@ interface CalendarHeaderProps {
   view: ViewType;
   onViewChange: (view: ViewType) => void;
   selectedDate: Date;
+  onShowHelp?: () => void;
 }
 
 const VIEWS: { key: ViewType; label: string; cn: string; icon: any }[] = [
@@ -35,13 +36,16 @@ const VIEWS: { key: ViewType; label: string; cn: string; icon: any }[] = [
   { key: 'yearly', label: 'Year', cn: '年', icon: CalendarRange },
 ];
 
-const CalendarHeader = ({ view, onViewChange, selectedDate }: CalendarHeaderProps) => {
+const CalendarHeader = ({ view, onViewChange, selectedDate, onShowHelp }: CalendarHeaderProps) => {
   const [profileOpen, setProfileOpen] = useState(false);
   const [aboutOpen, setAboutOpen] = useState(false);
   const [dataOpen, setDataOpen] = useState(false);
   const year = selectedDate.getFullYear();
   const zodiac = getYearZodiac(year);
   const stemBranch = getYearStemBranch(year);
+  
+  // Get payment link from environment variable
+  const STRIPE_PAYMENT_LINK = import.meta.env.VITE_STRIPE_PAYMENT_LINK;
 
   return (
     <header className="bg-card border-b border-border px-4 py-3">
@@ -56,7 +60,15 @@ const CalendarHeader = ({ view, onViewChange, selectedDate }: CalendarHeaderProp
           </p>
         </div>
 
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-2">
+          <button 
+            onClick={() => window.open(STRIPE_PAYMENT_LINK, '_blank')}
+            className="px-3 py-1 text-xs font-semibold text-yellow-600 dark:text-yellow-500 hover:bg-yellow-50 dark:hover:bg-yellow-950/20 rounded-full transition-colors flex items-center gap-1 border border-yellow-300 dark:border-yellow-700"
+          >
+            <Crown className="w-3.5 h-3.5" />
+            <span>UPGRADE</span>
+          </button>
+          
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <button className="p-1 hover:bg-muted rounded-full transition-colors flex items-center justify-center">
