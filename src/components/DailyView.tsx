@@ -1,11 +1,18 @@
-import { useState, useEffect } from 'react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { useState } from 'react';
+import { ChevronLeft, ChevronRight, Clock, FileText } from 'lucide-react';
 import { getLunarDate, getSolarTerm, HEAVENLY_STEMS, EARTHLY_BRANCHES, SOLAR_TERMS, getYearStemBranch, getMonthStemBranch } from '@/lib/chinese-calendar';
 import HorseMascot from './HorseMascot';
-import { getDaySignature, signatureHasEntries, loadSignatureStore } from '@/lib/signature-store';
+import { getDaySignature, signatureHasEntries } from '@/lib/signature-store';
 import SignatureDialog from './SignatureDialog';
+import HourlyDialog from './HourlyDialog';
 import { loadProfile, getProfileBranches } from '@/lib/bazi-profile';
 import { calculateRiskLevel } from '@/lib/bazi-calculator';
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuTrigger,
+} from '@/components/ui/context-menu';
 
 interface DailyViewProps {
   selectedDate: Date;
@@ -39,7 +46,8 @@ const DailyView = ({ selectedDate, onDateChange }: DailyViewProps) => {
   const [noteDate, setNoteDate] = useState<string | null>(null);
   const [noteLabel, setNoteLabel] = useState('');
   const [noteSignature, setNoteSignature] = useState('');
-  const [storeVersion, setStoreVersion] = useState(0);
+  const [showHourly, setShowHourly] = useState(false);
+  const [showSignature, setShowSignature] = useState(false);
 
   // Load user's BaZi profile for risk calculation
   const profile = loadProfile();
@@ -86,6 +94,25 @@ const DailyView = ({ selectedDate, onDateChange }: DailyViewProps) => {
     setNoteSignature(sig);
     setNoteLabel(`${d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })} · ${lunar.monthName}${lunar.dayName}`);
     setNoteDate(dateStr);
+    // Regular click opens signature dialog directly
+    setShowSignature(true);
+    setShowHourly(false);
+  };
+
+  const handleViewHourly = () => {
+    setShowHourly(true);
+    setShowSignature(false);
+  };
+
+  const handleLogBehavior = () => {
+    setShowSignature(true);
+    setShowHourly(false);
+  };
+
+  const closeDialogs = () => {
+    setNoteDate(null);
+    setShowHourly(false);
+    setShowSignature(false);
   };
 
   return (
@@ -131,11 +158,10 @@ const DailyView = ({ selectedDate, onDateChange }: DailyViewProps) => {
             ? calculateRiskLevel(dailyBranch, userBranches)
             : null;
 
-          return (
+          const cellContent = (
             <button
-              key={i}
               onClick={() => openNote(cell.day, cell.isOutside)}
-              className={`relative border border-border/40 p-0.5 min-h-[3.8rem] flex flex-col text-left transition-colors
+              className={`relative border border-border/40 p-0.5 min-h-[3.8rem] flex flex-col text-left transition-colors w-full
                 ${cell.isOutside ? 'opacity-40' : 'hover:bg-primary/5'}
                 ${isToday ? 'bg-secondary/70' : ''}
               `}
@@ -176,6 +202,35 @@ const DailyView = ({ selectedDate, onDateChange }: DailyViewProps) => {
                 <span className="absolute bottom-0.5 right-0.5 w-1.5 h-1.5 rounded-full bg-accent" />
               )}
             </button>
+          );
+
+          // Wrap in context menu only for non-outside days
+          if (cell.isOutside) {
+            return <div key={i}>{cellContent}</div>;
+          }
+
+          return (
+            <ContextMenu key={i}>
+              <ContextMenuTrigger asChild>
+                {cellContent}
+              </ContextMenuTrigger>
+              <ContextMenuContent className="w-48">
+                <ContextMenuItem onClick={() => {
+                  openNote(cell.day, cell.isOutside);
+                  handleViewHourly();
+                }}>
+                  <Clock className="w-4 h-4 mr-2" />
+                  View Hourly Details
+                </ContextMenuItem>
+                <ContextMenuItem onClick={() => {
+                  openNote(cell.day, cell.isOutside);
+                  handleLogBehavior();
+                }}>
+                  <FileText className="w-4 h-4 mr-2" />
+                  Log Behavior Pattern
+                </ContextMenuItem>
+              </ContextMenuContent>
+            </ContextMenu>
           );
         })}
       </div>
@@ -237,10 +292,19 @@ const DailyView = ({ selectedDate, onDateChange }: DailyViewProps) => {
         </div>
       )}
 
-      {noteDate && (
+      {noteDate && showHourly && (
+        <HourlyDialog
+          open={showHourly}
+          onClose={closeDialogs}
+          dateStr={noteDate}
+          dateLabel={noteLabel}
+        />
+      )}
+
+      {noteDate && showSignature && (
         <SignatureDialog
-          open={!!noteDate}
-          onClose={() => { setNoteDate(null); setStoreVersion(v => v + 1); }}
+          open={showSignature}
+          onClose={closeDialogs}
           signature={noteSignature}
           dateStr={noteDate}
           dateLabel={noteLabel}
