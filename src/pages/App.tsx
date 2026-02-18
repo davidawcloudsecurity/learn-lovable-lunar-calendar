@@ -65,10 +65,18 @@ const App = () => {
           />
         )}
         {view === 'monthly' && (
-          <MonthlyView selectedDate={selectedDate} onDateChange={setSelectedDate} onViewChange={setView as any} />
+          <MonthlyView 
+            selectedDate={selectedDate} 
+            onDateChange={setSelectedDate} 
+            onViewChange={() => setView('daily')} 
+          />
         )}
         {view === 'yearly' && (
-          <YearlyView selectedDate={selectedDate} onDateChange={setSelectedDate} onViewChange={setView as any} />
+          <YearlyView 
+            selectedDate={selectedDate} 
+            onDateChange={setSelectedDate} 
+            onViewChange={() => setView('monthly')} 
+          />
         )}
       </main>
 
