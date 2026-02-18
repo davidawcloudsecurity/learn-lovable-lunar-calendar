@@ -74,7 +74,7 @@ const HourlyView = ({ selectedDate }: HourlyViewProps) => {
                 <span className="text-sm font-medium text-muted-foreground">D</span>
               </div>
             </div>
-            <div className="w-16 h-16">
+            <div className="w-16 h-16 self-end">
               <HorseMascot />
             </div>
           </div>
