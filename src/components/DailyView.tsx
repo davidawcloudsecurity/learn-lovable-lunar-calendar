@@ -4,7 +4,6 @@ import { getLunarDate, getSolarTerm, HEAVENLY_STEMS, EARTHLY_BRANCHES, SOLAR_TER
 import HorseMascot from './HorseMascot';
 import { getDaySignature, signatureHasEntries } from '@/lib/signature-store';
 import SignatureDialog from './SignatureDialog';
-import HourlyDialog from './HourlyDialog';
 import { loadProfile, getProfileBranches } from '@/lib/bazi-profile';
 import { calculateRiskLevel } from '@/lib/bazi-calculator';
 import {
@@ -17,6 +16,7 @@ import {
 interface DailyViewProps {
   selectedDate: Date;
   onDateChange: (date: Date) => void;
+  onViewChange?: (view: 'hourly' | 'daily' | 'monthly' | 'yearly') => void;
 }
 
 const WEEKDAYS = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
@@ -42,11 +42,10 @@ function getDayStemBranch(date: Date) {
   return `${HEAVENLY_STEMS[stemIdx]}${EARTHLY_BRANCHES[branchIdx]}`;
 }
 
-const DailyView = ({ selectedDate, onDateChange }: DailyViewProps) => {
+const DailyView = ({ selectedDate, onDateChange, onViewChange }: DailyViewProps) => {
   const [noteDate, setNoteDate] = useState<string | null>(null);
   const [noteLabel, setNoteLabel] = useState('');
   const [noteSignature, setNoteSignature] = useState('');
-  const [showHourly, setShowHourly] = useState(false);
   const [showSignature, setShowSignature] = useState(false);
 
   // Load user's BaZi profile for risk calculation
@@ -96,22 +95,21 @@ const DailyView = ({ selectedDate, onDateChange }: DailyViewProps) => {
     setNoteDate(dateStr);
     // Regular click opens signature dialog directly
     setShowSignature(true);
-    setShowHourly(false);
   };
 
-  const handleViewHourly = () => {
-    setShowHourly(true);
-    setShowSignature(false);
+  const handleViewHourly = (day: number, isOutside: boolean) => {
+    if (isOutside) return;
+    const d = new Date(year, month, day);
+    onDateChange(d);
+    onViewChange?.('hourly');
   };
 
   const handleLogBehavior = () => {
     setShowSignature(true);
-    setShowHourly(false);
   };
 
   const closeDialogs = () => {
     setNoteDate(null);
-    setShowHourly(false);
     setShowSignature(false);
   };
 
@@ -216,8 +214,7 @@ const DailyView = ({ selectedDate, onDateChange }: DailyViewProps) => {
               </ContextMenuTrigger>
               <ContextMenuContent className="w-48">
                 <ContextMenuItem onClick={() => {
-                  openNote(cell.day, cell.isOutside);
-                  handleViewHourly();
+                  handleViewHourly(cell.day, cell.isOutside);
                 }}>
                   <Clock className="w-4 h-4 mr-2" />
                   View Hourly Details
@@ -290,15 +287,6 @@ const DailyView = ({ selectedDate, onDateChange }: DailyViewProps) => {
             <div key={t.name}>{t.day} — {t.en} ({t.name})</div>
           ))}
         </div>
-      )}
-
-      {noteDate && showHourly && (
-        <HourlyDialog
-          open={showHourly}
-          onClose={closeDialogs}
-          dateStr={noteDate}
-          dateLabel={noteLabel}
-        />
       )}
 
       {noteDate && showSignature && (
