@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import CalendarHeader, { type ViewType } from '@/components/CalendarHeader';
 import HourlyView from '@/components/HourlyView';
 import DailyView from '@/components/DailyView';
@@ -8,6 +8,26 @@ import YearlyView from '@/components/YearlyView';
 const Index = () => {
   const [view, setView] = useState<ViewType>('daily');
   const [selectedDate, setSelectedDate] = useState(new Date());
+
+  // Handle Android back button to return from hourly to daily view
+  useEffect(() => {
+    const handlePopState = () => {
+      if (view === 'hourly') {
+        setView('daily');
+      }
+    };
+
+    // Push state when entering hourly view (only if not already in history)
+    if (view === 'hourly') {
+      const currentState = window.history.state;
+      if (!currentState || currentState.view !== 'hourly') {
+        window.history.pushState({ view: 'hourly' }, '');
+      }
+    }
+
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, [view]);
 
   return (
     <div className="min-h-screen bg-background flex flex-col max-w-lg mx-auto border-x border-border">
