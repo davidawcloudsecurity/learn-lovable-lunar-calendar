@@ -12,10 +12,9 @@ export function BeginnerBanner({ onStartTour }: BeginnerBannerProps) {
 
   useEffect(() => {
     const dismissed = localStorage.getItem('beginnerBannerDismissed');
-    const hasSeenOnboarding = localStorage.getItem('hasSeenOnboarding');
     
-    // Show banner if they dismissed onboarding but haven't dismissed the banner
-    if (hasSeenOnboarding && !dismissed) {
+    // Show banner if not dismissed (always show, not dependent on onboarding)
+    if (!dismissed) {
       setVisible(true);
     }
   }, []);

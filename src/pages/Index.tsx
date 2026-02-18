@@ -14,9 +14,10 @@ const Index = () => {
   // Check if user is new (first time visiting)
   useEffect(() => {
     const hasSeenOnboarding = localStorage.getItem('hasSeenOnboarding');
-    if (!hasSeenOnboarding) {
-      setShowOnboarding(true);
-    }
+    // Disabled: Onboarding popup won't auto-show, but banner will still appear
+    // if (!hasSeenOnboarding) {
+    //   setShowOnboarding(true);
+    // }
   }, []);
 
   const handleOnboardingComplete = () => {
