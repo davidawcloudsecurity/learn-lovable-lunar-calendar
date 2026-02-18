@@ -61,6 +61,9 @@ const METAL_TRIO = ['巳', '酉', '丑'];
 const WATER_TRIO = ['申', '子', '辰'];
 
 // 破 (Breaking/Destruction) - Disruptive relationship
+// NOTE: Certain pairs intentionally overlap with SIX_HARMONIES (e.g., '寅'↔'亥' and '巳'↔'申').
+// This is deliberate, not a bug. The calculateRiskLevel function contains ordering logic that
+// checks SIX_HARMONIES before BREAKING, ensuring harmony takes precedence over disruption.
 const BREAKING: Record<string, string> = {
     '子': '酉', '酉': '子',
     '丑': '辰', '辰': '丑',
