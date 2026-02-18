@@ -141,5 +141,5 @@ export function calculateRiskLevel(dailyBranch: string, userBranches: string[]):
     }
 
     // NEUTRAL: No significant interaction
-    return { level: 'medium', emoji: '🟡', reason: 'Neutral' };
+    return { level: 'medium', emoji: '⚪', reason: 'Neutral' };
 }
