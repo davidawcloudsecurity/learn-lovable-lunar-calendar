@@ -142,20 +142,20 @@ export function calculateRiskLevel(dailyBranch: string, userBranches: string[]):
         return { level: 'high', emoji: '🔴', reason: 'Bullying Punishment (丑未戌刑)' };
     }
 
+    // LOW RISK: Harmony (checked before Breaking to prioritize positive relationships)
+    if (hasSixHarmony(dailyBranch, userBranches)) {
+        return { level: 'low', emoji: '🟢', reason: 'Six Harmony (六合)' };
+    }
+    if (hasTrioHarmony(dailyBranch, userBranches)) {
+        return { level: 'low', emoji: '🟢', reason: 'Trio Harmony (三合)' };
+    }
+
     // MEDIUM RISK: Harm or Breaking
     if (hasHarm(dailyBranch, userBranches)) {
         return { level: 'medium', emoji: '🟡', reason: 'Harm (害)' };
     }
     if (hasBreaking(dailyBranch, userBranches)) {
         return { level: 'medium', emoji: '🟡', reason: 'Breaking (破)' };
-    }
-
-    // LOW RISK: Harmony
-    if (hasSixHarmony(dailyBranch, userBranches)) {
-        return { level: 'low', emoji: '🟢', reason: 'Six Harmony (六合)' };
-    }
-    if (hasTrioHarmony(dailyBranch, userBranches)) {
-        return { level: 'low', emoji: '🟢', reason: 'Trio Harmony (三合)' };
     }
 
     // NEUTRAL: No significant interaction
