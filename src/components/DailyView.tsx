@@ -187,7 +187,7 @@ const DailyView = ({ selectedDate, onDateChange, onViewChange, onShowHelp }: Dai
                         title={riskInfo.reason}
                       />
                     )}
-                    <span className="relative z-10">{stemBranch[1]}</span>
+                    <span className="relative z-10 font-bold">{stemBranch[1]}</span>
                   </span>
                 </div>
               </div>
