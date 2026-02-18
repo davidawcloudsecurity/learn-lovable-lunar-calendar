@@ -45,7 +45,7 @@ const CalendarHeader = ({ view, onViewChange, selectedDate, onShowHelp }: Calend
   const stemBranch = getYearStemBranch(year);
   
   // Get payment link from environment variable
-  const STRIPE_PAYMENT_LINK = import.meta.env.VITE_STRIPE_PAYMENT_LINK || 'https://buy.stripe.com/5kQ00d5SYehgej0gjodby01';
+  const STRIPE_PAYMENT_LINK = import.meta.env.VITE_STRIPE_PAYMENT_LINK;
 
   return (
     <header className="bg-card border-b border-border px-4 py-3">
