@@ -1,5 +1,17 @@
 # Welcome to your Lovable project
+### Tables
+```
+Here’s a simple table showing what each BaZi pillar represents, especially in the context of penalties, destruction, and punishments:
+|--------|-----------------------------------------------------------------------|----------------------------------------------------------------------------------------------|
+| Pillar |                   Life area / meaning                                 |                             Key themes (for penalties / destruction)                         |
+|--------|-----------------------------------------------------------------------|----------------------------------------------------------------------------------------------|
+| Year   | Roots, parents, ancestors, early environment, health of head/neck     | Family tension, inherited patterns, health issues, or “background” luck turning against you. |
+| Month  | Siblings, peers, career, social circle, adolescence, chest/upper body | Work conflicts, business setbacks, social drama, or blocked opportunities.                   |
+| Day    | Self, spouse/partner, marriage, adult life, abdomen/digestive system  | Relationship problems, self‑sabotage, forced actions, or health issues in mid‑life.          |
+| Hour   | Children, later years, creativity, lower limbs/feet                   | Issues with kids, legacy, late‑life stress, or accidents in old age.                         |
+|--------|-----------------------------------------------------------------------|----------------------------------------------------------------------------------------------|
 
+```
 ### Six Harmony Combinations (六合) and Their Attributes:
 ```
 Mao and Xu (卯戌相合): This combination symbolises a barren mountain transformed by greenery, with individuals representing respect, diplomacy, and harmony in relationships. This combination produces Fire, due to the interaction between Wu Earth (戊土) and Yi Wood (乙木).
@@ -27,7 +39,140 @@ Chou and Wu (丑午相害): The Ox-Horse Six Harm combination causes self-worth 
 Zi and Wei (子未相害): The Rat-Goat Six Harm combination leads to clouded judgment, exaggeration of problems, and aversion to risks. This pairing tends to assume worst-case scenarios, inhibiting growth and independence.
 Yin and Si (寅巳相害): Associated with distrust of others and scepticism towards positive experiences, this harm may result in misjudged interactions. Dominance of this combination in a chart can indicate heightened accident risks, requiring careful mitigation.
 ```
+### Destruction
+```
+Destruction in the day (破 Po). Destruction in Bazi is behavior, attitude or actions that are obviously destructive to the person himself
 
+1. What Destruction is
+Destruction (破) is a side‑by‑side clash between certain Earthly Branches in your BaZi chart or in the 10‑year, year, month, or day pillars.
+
+It indicates forced, damaging actions you take that hurt yourself or your situation, often under pressure or feeling “backed into a corner.”
+
+2. Where it appears
+In the natal chart: Lifelong tendency toward self‑destructive habits, poor choices, or repeated setbacks that stem from your own behavior.
+
+In Fortune / Year / Month / Day pillar: A temporary period of conflict, breakdown, or loss; you may feel pushed into actions you later regret.
+
+3. Types of problems it causes
+Self‑destructive behavior: Addictions (alcohol, drugs), reckless spending, or harmful routines that damage health, wealth, or relationships.
+
+Relationship and social issues: Conflicts, breakups, or “forced” decisions in love, family, or work; misunderstandings and division when Destruction hits the Marriage / Day pillar.
+
+Mental and emotional strain: Constant dissatisfaction, inner turmoil, or feeling like your dreams are “shattered” or blocked.
+​
+4. When it can be useful
+Destruction can act as “creative destruction”: breaking old, stuck patterns so something new can emerge.
+| Rat 子              | Rooster 酉                            |
+| Rooster 酉          | Rat 子                                |
+| Pig 亥              | Tiger 寅                              |
+| Tiger 寅            | Pig 亥                                |
+| Dog 戌              | Rabbit 卯                             |
+| Rabbit 卯           | Dog 戌                                |
+| Goat 未             | Horse 午                              |
+| Horse 午            | Goat 未                               |
+| Monkey 申           | Snake 巳                              |
+| Snake 巳            | Monkey 申                             |
+| Ox 丑               | Dragon 辰                             |
+| Dragon 辰           | Ox 丑
+
+If the destroyed element is unfavorable, it may remove a burden; the key is to adapt, learn, and redirect rather than resist the change.
+
+5. Practical action steps
+Avoid big moves on Destruction days: Don’t start projects, sign contracts, or make major life decisions on Destruction days; use them for reflection and small, safe actions.
+
+Watch your habits: Identify and replace self‑sabotaging patterns (impulsive decisions, over‑indulgence) with structure and discipline.
+
+Protect key areas: If Destruction hits Marriage / Day pillar, avoid forcing relationship changes; focus on communication and patience instead.
+
+
+```
+### The Fire Ungrateful Punishment Day
+```
+The Ungrateful Punishment or Fire Punishment (無恩之刑 Wu En Zhixing) occurs when three animals come together: Monkey 申, Snake 巳 and Tiger 寅. Despite the fact that in the Bazi the Monkey 申 and the Snake 巳 merge, in alliance with the Tiger 寅, such a combination is no longer considered. Priority is given to Punishments because it is a more serious thing. Moreover, it can be noted that within the Ungrateful Punishment there is also a Clash of the Monkey 申 and the Tiger 寅.
+
+Spot the combo: Tiger (寅), Monkey (申), Snake (巳) together in your chart or year/month/day = “Fire / Ungrateful Penalty” is active.
+
+Expect betrayal: Watch for ungrateful or disloyal people, especially in business, family, or close relationships.
+
+Avoid big moves: Don’t sign contracts, start ventures, or hire key staff on days when all three animals line up.
+
+Be extra careful: Postpone major decisions, relocations, or long‑distance travel; risk of accidents or conflicts rises.
+
+Protect family: If penalty hits Year/Month/Day/Hour pillar, pay extra attention to health, parents, spouse, or children.
+
+If Fire helps you: Use the period cautiously for Fire‑related work (sales, marketing, visibility), but keep boundaries and records tight.
+```
+### The Earth Punishment in Bazi aka Bully Punishment
+```
+The Earth punishment is also called "Frightening Punishment", "Humiliating Punishment" or "Bully Punishment", as it imbues the recipient with corresponding internal qualities. It can manifest itself in two ways: externally, when someone bullies a person, or internally, when a person “bullies” himself. The cause of such situations is a person’s own carelessness. This may look like retribution for a mistake or oversight in the past, which is why you have to suffer now.
+
+Spot the combo: Earth Punishment activates when Ox (丑), Goat (未), Dog (戌) all appear together in your BaZi chart or in year/month/day.
+
+Expect self‑sabotage or bullying: It often shows as carelessness, internal pressure, or being bullied, usually linked to your own past mistakes or over‑responsibility.
+
+Avoid big actions on penalty days: Do not start projects, sign contracts, marry, move house, or have major medical procedures on Earth‑Punishment days; risk of loss and misunderstanding is high.
+
+Watch Earth‑related areas: Pay extra attention to health, home, family, and finances, since Earth governs these; if Marriage palace is hit, expect feeling sidelined or misunderstood in relationships.
+
+If Earth is favorable: Use the period to learn from setbacks, tighten discipline, and clarify responsibilities; problems can become growth if you stay self‑aware and avoid over‑committing.
+```
+### The Uncivilized Punishment
+```
+The Loveless Punishment or Uncivilized Punishment (無禮之刑 Wu Li Zhixing) appears when two animals, the Rat 子 and the Rabbit 卯, come together in any order. This could be the year of the Rat 子, the day of the Rabbit 卯, the month of the Rabbit 卯, the day of the Rat 子, or vice versa. The Uncivilized Punishment has a stronger effect when the Rat 子 and the Rabbit 卯 are next to each other, that is, in the current day and month, and not in the year.
+
+Spot the combo: Appears when Rat (子) and Rabbit (卯) are together in your BaZi chart or in year/month/day/hour.
+
+Expect “biting the hand that feeds”: You may oppose what supports you—family, partners, or benefactors—through disrespect, ingratitude, or impulsive actions.
+
+Watch love and sexuality: Strongest when Rat and Rabbit sit side‑by‑side; can bring relationship conflict, infidelity, guilt, or unhealthy attractions; worst cases involve harassment or abuse‑type risks.
+
+Avoid relationship moves on penalty days: Do not start or fix relationships, marry, or sign intimate‑life‑related agreements on Rat–Rabbit days; use them only for reflection, not action.
+
+Guard key pillars:
+
+Day pillar hit → problems in marriage and personal life.
+
+Month pillar hit → tension with mother; hour pillar hit → issues with children.
+```
+### The Self Punishment
+```
+The Self Penalty (自刑 Zi Xing) occurs when certain animals that do not like their own kind meet, these are: Dragon 辰 and Dragon 辰, Rooster 酉 and Rooster 酉, Horse 午 and Horse 午, Pig 亥 and Pig 亥. This can be the year of Horse 午 and the day of Horse 午, the month of Pig 亥 and the day of Pig 亥, or the month of Dragon 辰 and the day of Dragon 辰. Self Penalty has a stronger effect when two similar animals stand next to each other, that is, in the current day and month, and not in the year.
+
+Dragon + Dragon (辰辰) – Earth, storage animal; tends to cause depression, over‑thinking, and self‑sabotage via stagnation.
+
+Rooster + Rooster (酉酉) – Metal; often linked to sharp‑object‑related accidents or self‑harm, and rigid, self‑critical behavior.
+
+Horse + Horse (午午) – Fire; can show as impulsiveness, anger‑driven mistakes, or fire‑related injuries.
+
+Pig + Pig (亥亥) – Water; connected to over‑mobility, addictions (alcohol/drugs), and travel‑related mishaps.
+
+2. Where it appears in the chart
+Natal chart (birth pillars): Lifelong tendency toward indecision, guilt, self‑sabotage, and strained hidden conflicts with relatives.
+
+10‑year luck pillar: A decade of repeated setbacks, feeling trapped, and family tension; problems are mostly self‑made.
+
+Year/month/day pillar: Temporary blockage in that period—loss of wealth, sickness, accidents, or bad decisions.
+
+3. Types of problems it triggers
+Self‑harm patterns: Bad habits (smoking, over‑eating, reckless spending), self‑criticism, and “shooting yourself in the foot” behavior.
+
+Relationship issues: Secret dislike between close people (e.g., mother–wife friction), destructive or abusive relationships you keep choosing.
+
+Health and accidents: Psychosomatic illnesses, injuries, burns, falls, or other incidents that feel “accidental” but stem from your own choices.
+
+4. When it can be good
+If the repeated branch’s element is favorable to you, Self Penalty can strengthen that element and bring luck instead of harm (e.g., strong Metal helping a Metal‑favorable person).
+
+In that case, the “self‑made” actions still need discipline—use the energy for focused work, not impulsiveness.
+​
+
+5. Practical management steps
+Identify the pattern: Notice recurring mistakes, addictions, or relationship traps and admit they come from your own choices.
+
+Set boundaries and routines: Use structure, discipline, and clear rules to stop repeating the same self‑sabotaging actions.
+
+Avoid big moves on Self‑Penalty days: Don’t start projects, sign contracts, or make major life changes on days with double Dragon/Rooster/Horse/Pig; use them for reflection instead.
+```
 ## Project info
 
 **URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID

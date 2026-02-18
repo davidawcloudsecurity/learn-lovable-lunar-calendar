@@ -1,15 +1,22 @@
-import { useState, useEffect } from 'react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { useState } from 'react';
+import { ChevronLeft, ChevronRight, Clock, FileText } from 'lucide-react';
 import { getLunarDate, getSolarTerm, HEAVENLY_STEMS, EARTHLY_BRANCHES, SOLAR_TERMS, getYearStemBranch, getMonthStemBranch } from '@/lib/chinese-calendar';
 import HorseMascot from './HorseMascot';
-import { getDaySignature, signatureHasEntries, loadSignatureStore } from '@/lib/signature-store';
+import { getDaySignature, signatureHasEntries } from '@/lib/signature-store';
 import SignatureDialog from './SignatureDialog';
 import { loadProfile, getProfileBranches } from '@/lib/bazi-profile';
 import { calculateRiskLevel } from '@/lib/bazi-calculator';
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuTrigger,
+} from '@/components/ui/context-menu';
 
 interface DailyViewProps {
   selectedDate: Date;
   onDateChange: (date: Date) => void;
+  onViewChange?: (view: 'hourly' | 'daily' | 'monthly' | 'yearly') => void;
 }
 
 const WEEKDAYS = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
@@ -35,11 +42,11 @@ function getDayStemBranch(date: Date) {
   return `${HEAVENLY_STEMS[stemIdx]}${EARTHLY_BRANCHES[branchIdx]}`;
 }
 
-const DailyView = ({ selectedDate, onDateChange }: DailyViewProps) => {
+const DailyView = ({ selectedDate, onDateChange, onViewChange }: DailyViewProps) => {
   const [noteDate, setNoteDate] = useState<string | null>(null);
   const [noteLabel, setNoteLabel] = useState('');
   const [noteSignature, setNoteSignature] = useState('');
-  const [storeVersion, setStoreVersion] = useState(0);
+  const [showSignature, setShowSignature] = useState(false);
 
   // Load user's BaZi profile for risk calculation
   const profile = loadProfile();
@@ -86,6 +93,23 @@ const DailyView = ({ selectedDate, onDateChange }: DailyViewProps) => {
     setNoteSignature(sig);
     setNoteLabel(`${d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })} · ${lunar.monthName}${lunar.dayName}`);
     setNoteDate(dateStr);
+    // Regular click opens signature dialog directly
+    setShowSignature(true);
+  };
+
+  const handleViewHourly = (day: number) => {
+    const d = new Date(year, month, day);
+    onDateChange(d);
+    onViewChange?.('hourly');
+  };
+
+  const handleLogBehavior = () => {
+    setShowSignature(true);
+  };
+
+  const closeDialogs = () => {
+    setNoteDate(null);
+    setShowSignature(false);
   };
 
   return (
@@ -95,7 +119,7 @@ const DailyView = ({ selectedDate, onDateChange }: DailyViewProps) => {
         <button onClick={prevMonth} className="p-1 hover:bg-muted rounded-lg">
           <ChevronLeft className="w-5 h-5" />
         </button>
-        <h2 className="font-serif text-xl font-semibold">
+        <h2 className="font-serif text-base font-semibold">
           {selectedDate.toLocaleDateString('en-US', { month: 'long' })}, {year}
         </h2>
         <button onClick={nextMonth} className="p-1 hover:bg-muted rounded-lg">
@@ -131,11 +155,10 @@ const DailyView = ({ selectedDate, onDateChange }: DailyViewProps) => {
             ? calculateRiskLevel(dailyBranch, userBranches)
             : null;
 
-          return (
+          const cellContent = (
             <button
-              key={i}
               onClick={() => openNote(cell.day, cell.isOutside)}
-              className={`relative border border-border/40 p-0.5 min-h-[3.8rem] flex flex-col text-left transition-colors
+              className={`relative border border-border/40 p-0.5 min-h-[3.8rem] flex flex-col text-left transition-colors w-full
                 ${cell.isOutside ? 'opacity-40' : 'hover:bg-primary/5'}
                 ${isToday ? 'bg-secondary/70' : ''}
               `}
@@ -177,17 +200,36 @@ const DailyView = ({ selectedDate, onDateChange }: DailyViewProps) => {
               )}
             </button>
           );
+
+          // Wrap in context menu only for non-outside days
+          if (cell.isOutside) {
+            return <div key={i}>{cellContent}</div>;
+          }
+
+          return (
+            <ContextMenu key={i}>
+              <ContextMenuTrigger asChild>
+                {cellContent}
+              </ContextMenuTrigger>
+              <ContextMenuContent className="w-48">
+                <ContextMenuItem onClick={() => {
+                  handleViewHourly(cell.day);
+                }}>
+                  <Clock className="w-4 h-4 mr-2" />
+                  View Hourly Details
+                </ContextMenuItem>
+                <ContextMenuItem onClick={() => {
+                  openNote(cell.day, cell.isOutside);
+                  handleLogBehavior();
+                }}>
+                  <FileText className="w-4 h-4 mr-2" />
+                  Log Behavior Pattern
+                </ContextMenuItem>
+              </ContextMenuContent>
+            </ContextMenu>
+          );
         })}
       </div>
-
-      {/* Solar terms for this month at the bottom */}
-      {monthSolarTerms.length > 0 && (
-        <div className="mt-3 px-1 text-xs text-muted-foreground space-y-0.5">
-          {monthSolarTerms.map(t => (
-            <div key={t.name}>{t.day} — {t.en} ({t.name})</div>
-          ))}
-        </div>
-      )}
 
       {/* Risk Level Legend */}
       <div className="mt-3 px-1 text-sm space-y-0.5 border-t border-border/40 pt-2">
@@ -237,10 +279,19 @@ const DailyView = ({ selectedDate, onDateChange }: DailyViewProps) => {
         );
       })()}
 
-      {noteDate && (
+      {/* Solar terms for this month */}
+      {monthSolarTerms.length > 0 && (
+        <div className="mt-3 px-1 text-xs text-muted-foreground space-y-0.5">
+          {monthSolarTerms.map(t => (
+            <div key={t.name}>{t.day} — {t.en} ({t.name})</div>
+          ))}
+        </div>
+      )}
+
+      {noteDate && showSignature && (
         <SignatureDialog
-          open={!!noteDate}
-          onClose={() => { setNoteDate(null); setStoreVersion(v => v + 1); }}
+          open={showSignature}
+          onClose={closeDialogs}
           signature={noteSignature}
           dateStr={noteDate}
           dateLabel={noteLabel}

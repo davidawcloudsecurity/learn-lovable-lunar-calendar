@@ -65,16 +65,16 @@ const HourlyView = ({ selectedDate }: HourlyViewProps) => {
                 <span className="font-serif text-2xl tracking-wide">{yearSB.full}</span>
                 <span className="text-sm font-medium text-muted-foreground">Y</span>
               </div>
-              <div className="flex items-baseline gap-2.5 text-primary/80">
+              <div className="flex items-baseline gap-2 text-primary/80">
                 <span className="font-serif text-2xl tracking-wide">{monthSB.full}</span>
                 <span className="text-sm font-medium text-muted-foreground">M</span>
               </div>
-              <div className="flex items-baseline gap-2.5 text-primary/80">
+              <div className="flex items-baseline gap-2 text-primary/80">
                 <span className="font-serif text-2xl tracking-wide">{dayStem}{dayBranch}</span>
                 <span className="text-sm font-medium text-muted-foreground">D</span>
               </div>
             </div>
-            <div className="w-16 h-16">
+            <div className="w-16 h-16 self-end">
               <HorseMascot />
             </div>
           </div>

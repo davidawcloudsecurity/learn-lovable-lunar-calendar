@@ -48,10 +48,10 @@ const CalendarHeader = ({ view, onViewChange, selectedDate }: CalendarHeaderProp
       {/* Title row */}
       <div className="flex items-center justify-between">
         <div className="flex flex-col">
-          <h1 className="text-xl font-bold leading-tight">
+          <h1 className="text-sm font-bold leading-tight">
             {selectedDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
           </h1>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-xs text-muted-foreground">
             {stemBranch.full}年 · {stemBranch.element}{zodiac.cn}年
           </p>
         </div>
@@ -120,6 +120,17 @@ const CalendarHeader = ({ view, onViewChange, selectedDate }: CalendarHeaderProp
           <div className="text-sm text-muted-foreground space-y-2 py-2">
             <p>Version 1.1.0</p>
             <p>PWA enabled for standalone mobile experience.</p>
+            <div className="pt-2 border-t border-border">
+              <p className="font-medium text-foreground mb-1">Community</p>
+              <a 
+                href="https://discord.gg/gMhvWg5Q" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-primary hover:underline flex items-center gap-1"
+              >
+                Join our Discord
+              </a>
+            </div>
           </div>
         </DialogContent>
       </Dialog>
