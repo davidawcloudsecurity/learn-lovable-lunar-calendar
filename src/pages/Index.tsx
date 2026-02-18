@@ -4,10 +4,25 @@ import HourlyView from '@/components/HourlyView';
 import DailyView from '@/components/DailyView';
 import MonthlyView from '@/components/MonthlyView';
 import YearlyView from '@/components/YearlyView';
+import OnboardingTour from '@/components/OnboardingTour';
 
 const Index = () => {
   const [view, setView] = useState<ViewType>('daily');
   const [selectedDate, setSelectedDate] = useState(new Date());
+  const [showOnboarding, setShowOnboarding] = useState(false);
+
+  // Check if user is new (first time visiting)
+  useEffect(() => {
+    const hasSeenOnboarding = localStorage.getItem('hasSeenOnboarding');
+    if (!hasSeenOnboarding) {
+      setShowOnboarding(true);
+    }
+  }, []);
+
+  const handleOnboardingComplete = () => {
+    localStorage.setItem('hasSeenOnboarding', 'true');
+    setShowOnboarding(false);
+  };
 
   // Handle Android back button to return from hourly to daily view
   useEffect(() => {
@@ -31,11 +46,23 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background flex flex-col max-w-lg mx-auto border-x border-border">
-      <CalendarHeader view={view} onViewChange={setView} selectedDate={selectedDate} />
+      <CalendarHeader 
+        view={view} 
+        onViewChange={setView} 
+        selectedDate={selectedDate}
+        onShowHelp={() => setShowOnboarding(true)}
+      />
 
       <main className="flex-1 overflow-y-auto">
         {view === 'hourly' && <HourlyView selectedDate={selectedDate} />}
-        {view === 'daily' && <DailyView selectedDate={selectedDate} onDateChange={setSelectedDate} onViewChange={setView} />}
+        {view === 'daily' && (
+          <DailyView 
+            selectedDate={selectedDate} 
+            onDateChange={setSelectedDate} 
+            onViewChange={setView}
+            onShowHelp={() => setShowOnboarding(true)}
+          />
+        )}
         {view === 'monthly' && (
           <MonthlyView selectedDate={selectedDate} onDateChange={setSelectedDate} onViewChange={setView as any} />
         )}
@@ -53,6 +80,9 @@ const Index = () => {
           📅 Today
         </button>
       </footer>
+
+      {/* Onboarding Tour */}
+      <OnboardingTour open={showOnboarding} onComplete={handleOnboardingComplete} />
     </div>
   );
 };

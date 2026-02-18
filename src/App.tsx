@@ -8,6 +8,9 @@ import { Analytics } from "@vercel/analytics/react";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import Landing from "./pages/Landing";
+import EntrepreneursLanding from "./pages/EntrepreneursLanding";
+import OverthinkerLanding from "./pages/OverthinkerLanding";
+import WellnessLanding from "./pages/WellnessLanding";
 
 const queryClient = new QueryClient();
 
@@ -22,6 +25,9 @@ const App = () => (
           <Route path="/" element={<Index />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="/about" element={<Landing />} />
+          <Route path="/entrepreneurs" element={<EntrepreneursLanding />} />
+          <Route path="/overthinkers" element={<OverthinkerLanding />} />
+          <Route path="/wellness" element={<WellnessLanding />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

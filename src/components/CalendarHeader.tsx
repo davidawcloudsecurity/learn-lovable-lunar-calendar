@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { MoreVertical, Settings, Info, Search, Clock, Calendar, CalendarDays, CalendarRange, Database } from 'lucide-react';
+import { MoreVertical, Settings, Info, Search, Clock, Calendar, CalendarDays, CalendarRange, Database, HelpCircle } from 'lucide-react';
 import HorseMascot from './HorseMascot';
 import { getYearZodiac, getYearStemBranch } from '@/lib/chinese-calendar';
 import {
@@ -26,6 +26,7 @@ interface CalendarHeaderProps {
   view: ViewType;
   onViewChange: (view: ViewType) => void;
   selectedDate: Date;
+  onShowHelp?: () => void;
 }
 
 const VIEWS: { key: ViewType; label: string; cn: string; icon: any }[] = [
@@ -35,7 +36,7 @@ const VIEWS: { key: ViewType; label: string; cn: string; icon: any }[] = [
   { key: 'yearly', label: 'Year', cn: '年', icon: CalendarRange },
 ];
 
-const CalendarHeader = ({ view, onViewChange, selectedDate }: CalendarHeaderProps) => {
+const CalendarHeader = ({ view, onViewChange, selectedDate, onShowHelp }: CalendarHeaderProps) => {
   const [profileOpen, setProfileOpen] = useState(false);
   const [aboutOpen, setAboutOpen] = useState(false);
   const [dataOpen, setDataOpen] = useState(false);
@@ -89,6 +90,15 @@ const CalendarHeader = ({ view, onViewChange, selectedDate }: CalendarHeaderProp
             <DropdownMenuContent align="end" className="w-48">
               <DropdownMenuLabel>Calendar Menu</DropdownMenuLabel>
               <DropdownMenuSeparator />
+              {onShowHelp && (
+                <>
+                  <DropdownMenuItem onClick={onShowHelp}>
+                    <HelpCircle className="mr-2 h-4 w-4" />
+                    <span>Help & Tutorial</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                </>
+              )}
               <DropdownMenuItem onClick={() => setProfileOpen(true)}>
                 <Settings className="mr-2 h-4 w-4" />
                 <span>BaZi Settings</span>

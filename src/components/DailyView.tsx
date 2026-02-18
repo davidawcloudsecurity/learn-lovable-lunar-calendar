@@ -1,11 +1,13 @@
 import { useState } from 'react';
-import { ChevronLeft, ChevronRight, Clock, FileText } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Clock, FileText, HelpCircle } from 'lucide-react';
 import { getLunarDate, getSolarTerm, HEAVENLY_STEMS, EARTHLY_BRANCHES, SOLAR_TERMS, getYearStemBranch, getMonthStemBranch } from '@/lib/chinese-calendar';
 import HorseMascot from './HorseMascot';
 import { getDaySignature, signatureHasEntries } from '@/lib/signature-store';
 import SignatureDialog from './SignatureDialog';
 import { loadProfile, getProfileBranches } from '@/lib/bazi-profile';
 import { calculateRiskLevel } from '@/lib/bazi-calculator';
+import { BeginnerTooltip } from './BeginnerTooltip';
+import { BeginnerBanner } from './BeginnerBanner';
 import {
   ContextMenu,
   ContextMenuContent,
@@ -17,6 +19,7 @@ interface DailyViewProps {
   selectedDate: Date;
   onDateChange: (date: Date) => void;
   onViewChange?: (view: 'hourly' | 'daily' | 'monthly' | 'yearly') => void;
+  onShowHelp?: () => void;
 }
 
 const WEEKDAYS = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
@@ -42,7 +45,7 @@ function getDayStemBranch(date: Date) {
   return `${HEAVENLY_STEMS[stemIdx]}${EARTHLY_BRANCHES[branchIdx]}`;
 }
 
-const DailyView = ({ selectedDate, onDateChange, onViewChange }: DailyViewProps) => {
+const DailyView = ({ selectedDate, onDateChange, onViewChange, onShowHelp }: DailyViewProps) => {
   const [noteDate, setNoteDate] = useState<string | null>(null);
   const [noteLabel, setNoteLabel] = useState('');
   const [noteSignature, setNoteSignature] = useState('');
@@ -114,6 +117,9 @@ const DailyView = ({ selectedDate, onDateChange, onViewChange }: DailyViewProps)
 
   return (
     <div className="p-2 fade-in">
+      {/* Beginner Banner */}
+      <BeginnerBanner onStartTour={onShowHelp} />
+      
       {/* Month header */}
       <div className="flex items-center justify-between mb-1 px-1">
         <button onClick={prevMonth} className="p-1 hover:bg-muted rounded-lg">
@@ -233,7 +239,10 @@ const DailyView = ({ selectedDate, onDateChange, onViewChange }: DailyViewProps)
 
       {/* Risk Level Legend */}
       <div className="mt-3 px-1 text-sm space-y-0.5 border-t border-border/40 pt-2">
-        <div className="font-semibold text-primary">Daily Risk Levels (Work Focus):</div>
+        <div className="flex items-center gap-2">
+          <div className="font-semibold text-primary">Daily Risk Levels (Work Focus):</div>
+          <BeginnerTooltip content="These colors show how today's energy interacts with your personal birth chart. Green = good alignment, Red = potential conflicts." />
+        </div>
         {userBranches.length > 0 ? (
           <>
             <div className="text-muted-foreground">🔴 High: Clash/Punishment with your chart</div>
