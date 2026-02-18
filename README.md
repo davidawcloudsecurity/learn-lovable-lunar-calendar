@@ -2,14 +2,14 @@
 ### Tables
 ```
 Here’s a simple table showing what each BaZi pillar represents, especially in the context of penalties, destruction, and punishments:
-|--------|-----------------------------------------------------------------------|----------------------------------------------------------------------------------------------|
-| Pillar |                   Life area / meaning                                 |                             Key themes (for penalties / destruction)                         |
-|--------|-----------------------------------------------------------------------|----------------------------------------------------------------------------------------------|
-| Year   | Roots, parents, ancestors, early environment, health of head/neck     | Family tension, inherited patterns, health issues, or “background” luck turning against you. |
-| Month  | Siblings, peers, career, social circle, adolescence, chest/upper body | Work conflicts, business setbacks, social drama, or blocked opportunities.                   |
-| Day    | Self, spouse/partner, marriage, adult life, abdomen/digestive system  | Relationship problems, self‑sabotage, forced actions, or health issues in mid‑life.          |
-| Hour   | Children, later years, creativity, lower limbs/feet                   | Issues with kids, legacy, late‑life stress, or accidents in old age.                         |
-|--------|-----------------------------------------------------------------------|----------------------------------------------------------------------------------------------|
+|--------|-------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------|
+| Pillar |                   Work / Life area / meaning                                                                |                             Key themes (for penalties / destruction)                         |
+|--------|-------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------|
+| Year   | network, friends, industry, public image, Roots, parents, ancestors, early environment, health of head/neck | Family tension, inherited patterns, health issues, or “background” luck turning against you. |
+| Month  | career, business, work, Siblings, peers, career, social circle, adolescence, chest/upper body               | Work conflicts, business setbacks, social drama, or blocked opportunities.                   |
+| Day    | personal relationship, Self, spouse/partner, marriage, adult life, abdomen/digestive system                 | Relationship problems, self‑sabotage, forced actions, or health issues in mid‑life.          |
+| Hour   | investment, ideas, contributions, vision, legacy, Children, later years, creativity, lower limbs/feet       | Issues with kids, legacy, late‑life stress, or accidents in old age.                         |
+|--------|-------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------|
 
 ```
 ### Six Harmony Combinations (六合) and Their Attributes:
