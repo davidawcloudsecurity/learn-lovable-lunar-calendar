@@ -97,8 +97,7 @@ const DailyView = ({ selectedDate, onDateChange, onViewChange }: DailyViewProps)
     setShowSignature(true);
   };
 
-  const handleViewHourly = (day: number, isOutside: boolean) => {
-    if (isOutside) return;
+  const handleViewHourly = (day: number) => {
     const d = new Date(year, month, day);
     onDateChange(d);
     onViewChange?.('hourly');
@@ -214,7 +213,7 @@ const DailyView = ({ selectedDate, onDateChange, onViewChange }: DailyViewProps)
               </ContextMenuTrigger>
               <ContextMenuContent className="w-48">
                 <ContextMenuItem onClick={() => {
-                  handleViewHourly(cell.day, cell.isOutside);
+                  handleViewHourly(cell.day);
                 }}>
                   <Clock className="w-4 h-4 mr-2" />
                   View Hourly Details
