@@ -60,6 +60,19 @@ const FIRE_TRIO = ['寅', '午', '戌'];
 const METAL_TRIO = ['巳', '酉', '丑'];
 const WATER_TRIO = ['申', '子', '辰'];
 
+// 破 (Breaking/Destruction) - Disruptive relationship
+// NOTE: Certain pairs intentionally overlap with SIX_HARMONIES (e.g., '寅'↔'亥' and '巳'↔'申').
+// This is deliberate, not a bug. The calculateRiskLevel function contains ordering logic that
+// checks SIX_HARMONIES before BREAKING, ensuring harmony takes precedence over disruption.
+const BREAKING: Record<string, string> = {
+    '子': '酉', '酉': '子',
+    '丑': '辰', '辰': '丑',
+    '寅': '亥', '亥': '寅',
+    '卯': '午', '午': '卯',
+    '巳': '申', '申': '巳',
+    '未': '戌', '戌': '未'
+};
+
 // Check if daily branch clashes with any user branch
 function hasClash(dailyBranch: string, userBranches: string[]): boolean {
     return userBranches.some(b => CLASHES[dailyBranch] === b);
@@ -95,6 +108,11 @@ function hasHarm(dailyBranch: string, userBranches: string[]): boolean {
     return userBranches.some(b => HARMS[dailyBranch] === b);
 }
 
+// Check if daily branch breaks any user branch
+function hasBreaking(dailyBranch: string, userBranches: string[]): boolean {
+    return userBranches.some(b => BREAKING[dailyBranch] === b);
+}
+
 // Check if daily branch harmonizes with any user branch
 function hasSixHarmony(dailyBranch: string, userBranches: string[]): boolean {
     return userBranches.some(b => SIX_HARMONIES[dailyBranch] === b);
@@ -127,12 +145,7 @@ export function calculateRiskLevel(dailyBranch: string, userBranches: string[]):
         return { level: 'high', emoji: '🔴', reason: 'Bullying Punishment (丑未戌刑)' };
     }
 
-    // MEDIUM RISK: Harm
-    if (hasHarm(dailyBranch, userBranches)) {
-        return { level: 'medium', emoji: '🟡', reason: 'Harm (害)' };
-    }
-
-    // LOW RISK: Harmony
+    // LOW RISK: Harmony (checked before Breaking to prioritize positive relationships)
     if (hasSixHarmony(dailyBranch, userBranches)) {
         return { level: 'low', emoji: '🟢', reason: 'Six Harmony (六合)' };
     }
@@ -140,6 +153,14 @@ export function calculateRiskLevel(dailyBranch: string, userBranches: string[]):
         return { level: 'low', emoji: '🟢', reason: 'Trio Harmony (三合)' };
     }
 
+    // MEDIUM RISK: Harm or Breaking
+    if (hasHarm(dailyBranch, userBranches)) {
+        return { level: 'medium', emoji: '🟡', reason: 'Harm (害)' };
+    }
+    if (hasBreaking(dailyBranch, userBranches)) {
+        return { level: 'medium', emoji: '🟡', reason: 'Breaking (破)' };
+    }
+
     // NEUTRAL: No significant interaction
-    return { level: 'medium', emoji: '🟡', reason: 'Neutral' };
+    return { level: 'medium', emoji: '⚪', reason: 'Neutral' };
 }
