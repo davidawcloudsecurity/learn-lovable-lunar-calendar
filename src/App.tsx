@@ -6,7 +6,6 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { NotificationManager } from "@/components/NotificationManager";
 import { Analytics } from "@vercel/analytics/react";
 import Index from "./pages/Index";
-import AppPage from "./pages/App";
 import NotFound from "./pages/NotFound";
 import Landing from "./pages/Landing";
 import EntrepreneursLanding from "./pages/EntrepreneursLanding";
@@ -24,7 +23,6 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
-          <Route path="/app" element={<AppPage />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="/about" element={<Landing />} />
           <Route path="/entrepreneurs" element={<EntrepreneursLanding />} />
