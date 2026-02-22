@@ -187,8 +187,7 @@ resource "null_resource" "upload_to_s3" {
   depends_on = [
     null_resource.build_app,
     aws_s3_bucket.website,
-    aws_s3_bucket_policy.website,
-    aws_s3_bucket_website_configuration.website
+    aws_s3_bucket_policy.website
   ]
 }
 
