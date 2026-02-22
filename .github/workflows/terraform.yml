@@ -51,7 +51,7 @@ jobs:
                   echo "Found existing state, copying to working directory..."
                   cp state/terraform.tfstate ./terraform.tfstate
               fi
-              git checkout main
+              git checkout youtube/prod/infra
           fi
           
           # Clean up any orphaned IAM resources before applying
