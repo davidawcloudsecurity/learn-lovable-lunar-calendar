@@ -10,6 +10,12 @@ variable "main_cidr_block" {
   default     = "172.16.0.0/16"
 }
 
+variable "aws_region" {
+  description = "AWS region for resources"
+  type        = string
+  default     = "us-east-1"
+}
+
 variable "project_tag" {
   description = "Project name tag"
   type        = string
