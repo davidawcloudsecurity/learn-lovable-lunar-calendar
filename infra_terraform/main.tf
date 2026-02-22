@@ -152,9 +152,9 @@ resource "aws_cloudfront_distribution" "website" {
   }
 
   viewer_certificate {
-    cloudfront_default_certificate = var.domain_names == [] ? true : false
-    acm_certificate_arn            = var.domain_names != [] ? var.acm_certificate_arn : null
-    ssl_support_method             = var.domain_names != [] ? "sni-only" : null
+    cloudfront_default_certificate = length(var.domain_names) == 0 ? true : false
+    acm_certificate_arn            = length(var.domain_names) > 0 ? var.acm_certificate_arn : null
+    ssl_support_method             = length(var.domain_names) > 0 ? "sni-only" : null
     minimum_protocol_version       = "TLSv1.2_2021"
   }
 
