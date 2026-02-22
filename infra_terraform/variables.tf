@@ -1,13 +1,13 @@
-variable "create_vpc" {
-  description = "Whether to create a new VPC or use existing one"
-  type        = bool
-  default     = true
+variable "project_name" {
+  description = "Project name for resource naming"
+  type        = string
+  default     = "lunar-calendar"
 }
 
-variable "main_cidr_block" {
-  description = "CIDR block for the VPC"
+variable "environment" {
+  description = "Environment name (e.g., production, staging)"
   type        = string
-  default     = "172.16.0.0/16"
+  default     = "production"
 }
 
 variable "aws_region" {
@@ -16,26 +16,8 @@ variable "aws_region" {
   default     = "us-east-1"
 }
 
-variable "project_tag" {
-  description = "Project name tag"
-  type        = string
-  default     = "demo-project"
-}
-
-variable "public_subnet_cidrs" {
-  description = "CIDR blocks for public subnets"
-  type        = list(string)
-  default     = ["172.16.1.0/24", "172.16.2.0/24"]
-}
-
-variable "private_subnet_cidrs" {
-  description = "CIDR blocks for private subnets"
-  type        = list(string)
-  default     = ["172.16.10.0/24", "172.16.11.0/24"]
-}
-
-variable "azs" {
-  description = "Availability zones"
-  type        = list(string)
-  default     = ["us-east-1a", "us-east-1b"]
+variable "tags" {
+  description = "Additional tags for resources"
+  type        = map(string)
+  default     = {}
 }
