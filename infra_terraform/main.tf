@@ -1,266 +1,250 @@
+# Lunar Calendar - Serverless AWS Infrastructure
+# Optimized for static React/Vite SPA with CloudFront + S3
 
-# Define AWS as the provider with the specified region.
+terraform {
+  required_version = ">= 1.0"
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 5.0"
+    }
+    null = {
+      source  = "hashicorp/null"
+      version = "~> 3.0"
+    }
+  }
+}
+
 provider "aws" {
-  region = "us-east-1"
+  region = var.aws_region
 }
 
-# Create an AWS VPC with the specified CIDR block and tags.
-resource "aws_vpc" "demo_main_vpc" {
-  count                = var.create_vpc ? 1 : 0
-  cidr_block           = var.main_cidr_block
-  enable_dns_hostnames = true
-  enable_dns_support   = true
-  tags = {
-    Name = var.project_tag
+# Null resource to build the application
+resource "null_resource" "build_app" {
+  # Trigger rebuild when source files change
+  triggers = {
+    package_json = filemd5("${path.module}/../package.json")
+    src_hash     = sha256(join("", [for f in fileset("${path.module}/../src", "**") : filemd5("${path.module}/../src/${f}")]))
+    always_run   = timestamp()
   }
-}
 
-# Internet Gateway
-resource "aws_internet_gateway" "demo_igw" {
-  count  = var.create_vpc ? 1 : 0
-  vpc_id = var.create_vpc ? aws_vpc.demo_main_vpc[0].id : null
-  tags = {
-    Name = "${var.project_tag}-igw"
+  # Build the application
+  provisioner "local-exec" {
+    command     = var.build_command
+    working_dir = "${path.module}/.."
   }
 }
 
-# Data source for existing VPC (when not creating new one)
-data "aws_vpc" "existing" {
-  count = var.create_vpc ? 0 : 1
-  
-  filter {
-    name   = "tag:Name"
-    values = [var.project_tag]
-  }
-}
-
-resource "aws_subnet" "public_subnet_01" {
-  count                   = var.create_vpc ? length(var.public_subnet_cidrs) : 0
-  vpc_id                  = var.create_vpc ? aws_vpc.demo_main_vpc[0].id : null
-  cidr_block              = var.public_subnet_cidrs[count.index]
-  availability_zone       = var.azs[count.index]
-  map_public_ip_on_launch = true
-  tags = {
-    Name = "${var.project_tag}-pb-sub-01"
-  }
-}
-
-# Data source for existing public subnets
-data "aws_subnets" "existing_public" {
-  count = var.create_vpc ? 0 : 1
-  
-  filter {
-    name   = "vpc-id"
-    values = [data.aws_vpc.existing[0].id]
-  }
-  
-  filter {
-    name   = "tag:Name"
-    values = ["${var.project_tag}-pb-sub-01"]
-  }
-}
-
-resource "aws_subnet" "private_subnet_01" {
-  count             = var.create_vpc ? length(var.private_subnet_cidrs) : 0
-  vpc_id            = var.create_vpc ? aws_vpc.demo_main_vpc[0].id : null
-  cidr_block        = var.private_subnet_cidrs[count.index]
-  availability_zone = var.azs[count.index]
-  tags = {
-    Name = "${var.project_tag}-pv-sub-01"
-  }
-}
-
-# Public Route Table
-resource "aws_route_table" "public_rt" {
-  count  = var.create_vpc ? 1 : 0
-  vpc_id = var.create_vpc ? aws_vpc.demo_main_vpc[0].id : null
-  
-  route {
-    cidr_block = "0.0.0.0/0"
-    gateway_id = var.create_vpc ? aws_internet_gateway.demo_igw[0].id : null
-  }
+# S3 bucket for static website hosting
+resource "aws_s3_bucket" "website" {
+  bucket = var.bucket_name
   
   tags = {
-    Name = "${var.project_tag}-public-rt"
+    Name        = "${var.project_tag}-website"
+    Environment = var.environment
+  }
+
+  depends_on = [null_resource.build_app]
+}
+
+# S3 bucket ownership controls
+resource "aws_s3_bucket_ownership_controls" "website" {
+  bucket = aws_s3_bucket.website.id
+  
+  rule {
+    object_ownership = "BucketOwnerPreferred"
   }
 }
 
-# Associate public subnets with public route table
-resource "aws_route_table_association" "public_rta" {
-  count          = var.create_vpc ? length(aws_subnet.public_subnet_01) : 0
-  subnet_id      = aws_subnet.public_subnet_01[count.index].id
-  route_table_id = aws_route_table.public_rt[0].id
+# S3 bucket public access block
+resource "aws_s3_bucket_public_access_block" "website" {
+  bucket = aws_s3_bucket.website.id
+
+  block_public_acls       = false
+  block_public_policy     = false
+  ignore_public_acls      = false
+  restrict_public_buckets = false
 }
 
-# Security Group for Frontend
-resource "aws_security_group" "frontend_sg" {
-  count       = var.create_vpc ? 1 : 0
-  name        = "${var.project_tag}-frontend-sg"
-  description = "Security group for frontend EC2"
-  vpc_id      = aws_vpc.demo_main_vpc[0].id
+# S3 bucket ACL
+resource "aws_s3_bucket_acl" "website" {
+  depends_on = [
+    aws_s3_bucket_ownership_controls.website,
+    aws_s3_bucket_public_access_block.website,
+  ]
 
-  ingress {
-    from_port   = 80
-    to_port     = 80
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+  bucket = aws_s3_bucket.website.id
+  acl    = "public-read"
+}
+
+# S3 bucket website configuration
+resource "aws_s3_bucket_website_configuration" "website" {
+  bucket = aws_s3_bucket.website.id
+
+  index_document {
+    suffix = "index.html"
   }
 
-  ingress {
-    from_port   = 22
-    to_port     = 22
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  tags = {
-    Name = "${var.project_tag}-frontend-sg"
+  error_document {
+    key = "index.html"  # SPA routing - all errors go to index.html
   }
 }
 
-# Security Group for Backend
-resource "aws_security_group" "backend_sg" {
-  count       = var.create_vpc ? 1 : 0
-  name        = "${var.project_tag}-backend-sg"
-  description = "Security group for backend EC2"
-  vpc_id      = aws_vpc.demo_main_vpc[0].id
+# S3 bucket policy for public read access
+resource "aws_s3_bucket_policy" "website" {
+  bucket = aws_s3_bucket.website.id
 
-  ingress {
-    from_port   = 8000
-    to_port     = 8000
-    protocol    = "tcp"
-    cidr_blocks = ["172.16.0.0/16"]
-  }
-
-  ingress {
-    from_port   = 22
-    to_port     = 22
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  tags = {
-    Name = "${var.project_tag}-backend-sg"
-  }
-}
-
-# IAM Role for EC2 instances
-resource "aws_iam_role" "ec2_role" {
-  name = "${var.project_tag}-ec2-role"
-
-  assume_role_policy = jsonencode({
+  policy = jsonencode({
     Version = "2012-10-17"
-    Statement = [{
-      Action = "sts:AssumeRole"
-      Effect = "Allow"
-      Principal = {
-        Service = "ec2.amazonaws.com"
+    Statement = [
+      {
+        Sid       = "PublicReadGetObject"
+        Effect    = "Allow"
+        Principal = "*"
+        Action    = "s3:GetObject"
+        Resource  = "${aws_s3_bucket.website.arn}/*"
       }
-    }]
+    ]
   })
+
+  depends_on = [aws_s3_bucket_public_access_block.website]
 }
 
-resource "aws_iam_instance_profile" "ec2_profile" {
-  name = "${var.project_tag}-ec2-profile"
-  role = aws_iam_role.ec2_role.name
+# CloudFront Origin Access Identity (for secure S3 access)
+resource "aws_cloudfront_origin_access_identity" "website" {
+  comment = "OAI for ${var.project_tag}"
 }
 
-resource "aws_iam_role_policy_attachment" "ssm_policy" {
-  role       = aws_iam_role.ec2_role.name
-  policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
-}
+# CloudFront distribution
+resource "aws_cloudfront_distribution" "website" {
+  enabled             = true
+  is_ipv6_enabled     = true
+  default_root_object = "index.html"
+  price_class         = var.cloudfront_price_class
+  comment             = "${var.project_tag} - Lunar Calendar"
+  
+  # Custom domain aliases (optional)
+  aliases = var.domain_names
 
-# Get latest Ubuntu AMI
-data "aws_ami" "ubuntu" {
-  most_recent = true
-  owners      = ["099720109477"]
+  origin {
+    domain_name = aws_s3_bucket_website_configuration.website.website_endpoint
+    origin_id   = "S3-${var.bucket_name}"
 
-  filter {
-    name   = "name"
-    values = ["ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-*"]
+    custom_origin_config {
+      http_port              = 80
+      https_port             = 443
+      origin_protocol_policy = "http-only"
+      origin_ssl_protocols   = ["TLSv1.2"]
+    }
   }
-}
-/* save money
-# Backend EC2 Instance
-resource "aws_instance" "backend" {
-  count                  = var.create_vpc ? 1 : 0
-  ami                    = data.aws_ami.ubuntu.id
-  instance_type          = "t3.medium"
-  subnet_id              = aws_subnet.public_subnet_01[0].id
-  vpc_security_group_ids = [aws_security_group.backend_sg[0].id]
-  iam_instance_profile   = aws_iam_instance_profile.ec2_profile.name
 
-  user_data = <<-EOF
-              #!/bin/bash
-              apt update
-              apt install -y git curl
-              curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
-              apt install -y nodejs
-              cd /opt
-              git clone https://github.com/davidawcloudsecurity/learn-lovable-lunar-calendar.git app
-              cd app
-              npm install
-              npm install -g pm2
-              EOF
+  default_cache_behavior {
+    allowed_methods  = ["GET", "HEAD", "OPTIONS"]
+    cached_methods   = ["GET", "HEAD"]
+    target_origin_id = "S3-${var.bucket_name}"
+
+    forwarded_values {
+      query_string = false
+      cookies {
+        forward = "none"
+      }
+    }
+
+    viewer_protocol_policy = "redirect-to-https"
+    min_ttl                = 0
+    default_ttl            = 3600
+    max_ttl                = 86400
+    compress               = true
+  }
+
+  # Custom error response for SPA routing
+  custom_error_response {
+    error_code         = 404
+    response_code      = 200
+    response_page_path = "/index.html"
+  }
+
+  custom_error_response {
+    error_code         = 403
+    response_code      = 200
+    response_page_path = "/index.html"
+  }
+
+  restrictions {
+    geo_restriction {
+      restriction_type = "none"
+    }
+  }
+
+  viewer_certificate {
+    cloudfront_default_certificate = var.domain_names == [] ? true : false
+    acm_certificate_arn            = var.domain_names != [] ? var.acm_certificate_arn : null
+    ssl_support_method             = var.domain_names != [] ? "sni-only" : null
+    minimum_protocol_version       = "TLSv1.2_2021"
+  }
 
   tags = {
-    Name = "${var.project_tag}-backend"
+    Name        = "${var.project_tag}-cdn"
+    Environment = var.environment
   }
 }
-*/
-# Frontend EC2 Instance
-resource "aws_instance" "frontend" {
-  count                  = var.create_vpc ? 1 : 0
-  ami                    = data.aws_ami.ubuntu.id
-  instance_type          = "t3.small"
-  subnet_id              = aws_subnet.public_subnet_01[0].id
-  vpc_security_group_ids = [aws_security_group.frontend_sg[0].id]
-  iam_instance_profile   = aws_iam_instance_profile.ec2_profile.name
 
-  user_data = <<-EOF
-              #!/bin/bash
-              apt update
-              apt install -y nginx git curl
-              curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
-              apt install -y nodejs
-              cd /opt
-              git clone https://github.com/davidawcloudsecurity/learn-lovable-lunar-calendar.git app
-              cd app
-              npm install
-              npm run build
-              rm /etc/nginx/sites-enabled/default
-              cat > /etc/nginx/sites-available/app <<'NGINX'
-              server {
-                listen 80;
-                root /opt/app/dist;
-                index index.html;
-                location /api/ {
-                  proxy_pass http://localhost:8000;
-                }
-                location / {
-                  try_files $uri /index.html;
-                }
-              }
-              NGINX
-              ln -s /etc/nginx/sites-available/app /etc/nginx/sites-enabled/
-              systemctl restart nginx
-              EOF
+# Null resource to upload files to S3
+resource "null_resource" "upload_to_s3" {
+  # Trigger upload when build changes or bucket changes
+  triggers = {
+    build_hash  = null_resource.build_app.id
+    bucket_name = aws_s3_bucket.website.id
+  }
 
-  tags = {
-    Name = "${var.project_tag}-frontend"
+  # Upload files to S3
+  provisioner "local-exec" {
+    command = <<-EOT
+      aws s3 sync ${path.module}/../dist/ s3://${aws_s3_bucket.website.id}/ \
+        --delete \
+        --cache-control "public, max-age=31536000, immutable" \
+        --exclude "index.html" && \
+      aws s3 cp ${path.module}/../dist/index.html s3://${aws_s3_bucket.website.id}/index.html \
+        --cache-control "public, max-age=0, must-revalidate"
+    EOT
+  }
+
+  depends_on = [
+    null_resource.build_app,
+    aws_s3_bucket.website,
+    aws_s3_bucket_policy.website,
+    aws_s3_bucket_website_configuration.website
+  ]
+}
+
+# Null resource to invalidate CloudFront cache
+resource "null_resource" "invalidate_cloudfront" {
+  # Trigger invalidation when files are uploaded
+  triggers = {
+    upload_hash = null_resource.upload_to_s3.id
+  }
+
+  # Invalidate CloudFront cache
+  provisioner "local-exec" {
+    command = "aws cloudfront create-invalidation --distribution-id ${aws_cloudfront_distribution.website.id} --paths '/*'"
+  }
+
+  depends_on = [
+    null_resource.upload_to_s3,
+    aws_cloudfront_distribution.website
+  ]
+}
+
+# Route53 DNS records (optional - only if using custom domain)
+resource "aws_route53_record" "website" {
+  count   = length(var.domain_names) > 0 && var.route53_zone_id != "" ? length(var.domain_names) : 0
+  zone_id = var.route53_zone_id
+  name    = var.domain_names[count.index]
+  type    = "A"
+
+  alias {
+    name                   = aws_cloudfront_distribution.website.domain_name
+    zone_id                = aws_cloudfront_distribution.website.hosted_zone_id
+    evaluate_target_health = false
   }
 }
